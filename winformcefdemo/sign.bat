@@ -1,0 +1,1 @@
+﻿.\signtool.exe sign /t http://timestamp.verisign.com/scripts/timstamp.dll  /f D:\workspace\winformcefdemo\winformcefdemo\winformcefdemo\CEFHuaClient.pfx /p ****** /v D:\workspace\winformcefdemo\winformcefdemo\winformcefdemo\bin\x86\Release\西一爱服小花仙登录器.exe
