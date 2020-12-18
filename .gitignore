@@ -3,3 +3,6 @@
 ################################################################################
 
 /packages
+/winformcefdemo/obj
+/winformcefdemo/bin/x86
+/winformcefdemo/pepflashplayer.dll

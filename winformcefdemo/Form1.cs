@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
@@ -15,6 +16,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using winformcefdemo;
 
 namespace CEFHuaClient
 {
@@ -24,6 +26,7 @@ namespace CEFHuaClient
         public Panel panel { get; set; }
         public ComboBox resolution { get; set; }
         public Button captureBtn  { get; set; }
+        public Button resetFlashPathBtn { get; set; }
         public bool isCaptureError = false;
 
         [DllImport("user32.dll")]
@@ -56,11 +59,33 @@ namespace CEFHuaClient
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            string ppapiFlashPath = ConfigurationManager.AppSettings["ppapiFlashPath"];
+            if (!File.Exists(ppapiFlashPath))
+            {
+                OpenFileDialog openFile = new OpenFileDialog();
+                openFile.Filter = "Flash组件文件pepflashplayer.dll (*.dll)|*.dll";
+                openFile.Title = "没有找到Flash文件，或者首次运行需要指定Flash组件文件，文件名通常是pepflashplayer.dll，必须是32位的";
+                DialogResult dresult = openFile.ShowDialog();
+                this.Activate();
+                if (dresult == DialogResult.OK)
+                {
+                    ppapiFlashPath = openFile.FileName;
+                    Configuration cfa = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                    cfa.AppSettings.Settings["ppapiFlashPath"].Value = ppapiFlashPath;
+                    cfa.Save();
+                    ConfigurationManager.RefreshSection("appSettings");
+                }
+                else
+                {
+                    MessageBox.Show("未指定Flash组件文件，登录器无法运行！");
+                    System.Environment.Exit(-101);
+                }
+            }
 
             CefSettings settings = new CefSettings();
             settings.CefCommandLineArgs.Add("--disable-web-security");//关闭同源策略
             settings.CefCommandLineArgs.Add("--ppapi-flash-version", "32.0.0.453");//PepperFlash\manifest.json中的version
-            settings.CefCommandLineArgs.Add("--ppapi-flash-path", "pepflashplayer.dll");
+            settings.CefCommandLineArgs.Add("--ppapi-flash-path", ppapiFlashPath);
 
             // 必须设置缓存和Cookie否则点击快速进入或者选择服务器时会卡背景logo
             settings.PersistSessionCookies = true;
@@ -97,8 +122,8 @@ namespace CEFHuaClient
             captureBtn.Text = "截图";
             captureBtn.Left = 0;
             captureBtn.Top = 0;
-            captureBtn.Width = 100;
-            captureBtn.Height = 30;
+            captureBtn.Width = 150;
+            captureBtn.Height = 25;
             captureBtn.Click += CaptureBtn_Click;
             captureBtn.MouseUp += CaptureBtn_MouseUp;
             this.Controls.Add(captureBtn);
@@ -111,9 +136,10 @@ namespace CEFHuaClient
             resolution.Items.Add("3840x2160");
             resolution.Items.Add("7680x4320");
             resolution.Items.Add("128x72");
-            resolution.Left = 100;
+            resolution.Items.Add("自定义...");
+            resolution.Left = 150;
             resolution.Top = 0;
-            resolution.Width = 150;
+            resolution.Width = 100;
             resolution.Height = 30;
             resolution.DropDownStyle = ComboBoxStyle.DropDownList;
             resolution.SelectedIndex = 0;
@@ -121,9 +147,27 @@ namespace CEFHuaClient
             this.Controls.Add(resolution);
             this.Controls.SetChildIndex(resolution, 0);
 
+            resetFlashPathBtn = new Button();
+            resetFlashPathBtn.Text = "重置Flash路径";
+            resetFlashPathBtn.Left = 250;
+            resetFlashPathBtn.Top = 0;
+            resetFlashPathBtn.Width = 150;
+            resetFlashPathBtn.Height = 25;
+            resetFlashPathBtn.Click += ResetFlashPathBtn_Click;
+            this.Controls.Add(resetFlashPathBtn);
+            this.Controls.SetChildIndex(resetFlashPathBtn, 0);
+
             browser.LoadHtml("<html><head></head><body><embed style='position: absolute; left: 0; top: 0; height: 100%; width: 100%;' src='http://hua.61.com/Client.swf?platform=winform&timestamp="  + DateTime.Now.ToString() +  "'></embed></body></html>", "http://hua.61.com/play.shtml");
             browser.DownloadHandler = new IEDownloadHandler();
 
+        }
+
+        private void ResetFlashPathBtn_Click(object sender, EventArgs e)
+        {
+            Configuration cfa = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            cfa.AppSettings.Settings["ppapiFlashPath"].Value = "";
+            cfa.Save();
+            Application.Restart();
         }
 
         private void CaptureBtn_MouseUp(object sender, MouseEventArgs e)
@@ -197,6 +241,14 @@ namespace CEFHuaClient
                 case "7680x4320":
                     resizeWindow(7680, 4320);
                     browser.ExecuteScriptAsync("document.getElementsByTagName('embed')[0].Zoom(100);");
+                    break;
+                case "自定义...":
+                    CustomResolution resolution = new CustomResolution(this.Width, this.Height);
+                    if (resolution.ShowDialog() == DialogResult.OK)
+                    {
+                        resizeWindow(resolution.thisWidth, resolution.thisHeight);
+                        resolution.Dispose();
+                    }
                     break;
                 default: break;
             }
@@ -275,10 +327,6 @@ namespace CEFHuaClient
 
         private void resizeWindow(int width, int height)
         {
-            const short SWP_NOMOVE = 0x2;
-            const short SWP_NOSIZE = 1;
-            const short SWP_NOZORDER = 0x4;
-            const int SWP_SHOWWINDOW = 0x0040;
             const int SWP_NOSENDCHANGING = 0x0400;
 
             Process[] processes = Process.GetProcesses(".");
