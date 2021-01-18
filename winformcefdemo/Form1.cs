@@ -1,4 +1,5 @@
 ﻿using CefSharp;
+using CefSharp.DevTools.Page;
 using CefSharp.WinForms;
 using Newtonsoft.Json;
 // using CefSharp.OffScreen;
@@ -28,6 +29,8 @@ namespace CEFHuaClient
         public Button captureBtn  { get; set; }
         public Button resetFlashPathBtn { get; set; }
         public bool isCaptureError = false;
+
+        PageClient pageClien = null;
 
         [DllImport("user32.dll")]
         private static extern bool SetWindowPos(IntPtr hWnd, int hWndlnsertAfter, int X, int Y, int cx, int cy, uint Flags);
@@ -60,6 +63,7 @@ namespace CEFHuaClient
         private void Form1_Load(object sender, EventArgs e)
         {
             string ppapiFlashPath = ConfigurationManager.AppSettings["ppapiFlashPath"];
+            // string ppapiFlashPath = Environment.GetEnvironmentVariable("TEMP") + "\\Release\\pepflashplayer.dll";
             if (!File.Exists(ppapiFlashPath))
             {
                 OpenFileDialog openFile = new OpenFileDialog();
@@ -286,42 +290,55 @@ namespace CEFHuaClient
         {
             try
             {
-                if (!isCaptureError) {
+                if (!isCaptureError)
+                {
                     captureBtn.Enabled = false;
                     captureBtn.Text = "正在截图！";
                     captureBtn.Cursor = Cursors.WaitCursor;
                 }
-                byte[] result = await CEFHuaClient.CefSharp.Example.DevTools.DevToolsExtensions.CaptureScreenShotAsPng(browser);
-                captureBtn.Cursor = Cursors.Arrow;
-                captureBtn.Enabled = true;
-                captureBtn.Text = "不能再截了！";
-                // task.Start();
-                // byte[] result = task.Result;
-                SaveFileDialog dialog = new SaveFileDialog();
-                dialog.Filter = "PNG图片 (*.PNG)|*.PNG";
-                DialogResult dresult = dialog.ShowDialog();
-                if (dresult == DialogResult.OK)
+                if (pageClien == null)
                 {
-                    string path = dialog.FileName;
-                    try
-                    {
-                        File.WriteAllBytes(path, result);
-                        MessageBox.Show(path + "保存成功。");
-                        
-                    } catch (Exception e)
-                    {
-                        MessageBox.Show(path + "保存失败！错误信息：" + e.Message);
-                    }
+                    pageClien = browser.GetBrowser().GetDevToolsClient().Page;
                 }
 
-            }
-            catch (Exception ee)
+                var result = await pageClien.CaptureScreenshotAsync();
+                captureBtn.Cursor = Cursors.Arrow;
+                captureBtn.Enabled = true;
+                captureBtn.Text = "截图";
+
+                if (result.Data != null)
+                {
+
+                    MemoryStream ms = new MemoryStream(result.Data);
+                    ms.Write(result.Data, 0, result.Data.Length);
+                    // pictureBox1.Image = Image.FromStream(ms);
+
+                    SaveFileDialog dialog = new SaveFileDialog();
+                    dialog.Filter = "PNG图片 (*.PNG)|*.PNG";
+                    DialogResult dresult = dialog.ShowDialog();
+                    if (dresult == DialogResult.OK)
+                    {
+                        string path = dialog.FileName;
+                        try
+                        {
+                            File.WriteAllBytes(path, result.Data);
+                            MessageBox.Show(path + "保存成功。");
+
+                        }
+                        catch (Exception e)
+                        {
+                            MessageBox.Show(path + "保存失败！错误信息：" + e.Message);
+                        }
+                    }
+
+                }
+            } catch (Exception e)
             {
                 isCaptureError = true;
                 captureBtn.Cursor = Cursors.Arrow;
                 captureBtn.Enabled = true;
                 captureBtn.Text = "不能再截了！";
-                MessageBox.Show("目前暂时只支持截一次图，暂时不支持截更多次数的图片，如果要继续截图得退出程序重开。作者确实没法解决这个问题了，谁有好的想法也欢迎提出来，具体详情请关注https://stackoverflow.com/questions/65334430/message-id-went-wrong-when-using-cef-devtools-executedevtoolsmethodasync-and-pag 。相关技术细节：" + ee.Message, "暂不支持的操作", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("截图过程中出现了未知的错误：" + e.Message, "西一爱服 小花仙登录器", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
