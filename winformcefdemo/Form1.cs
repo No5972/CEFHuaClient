@@ -28,7 +28,12 @@ namespace CEFHuaClient
         public ComboBox resolution { get; set; }
         public Button captureBtn  { get; set; }
         public Button resetFlashPathBtn { get; set; }
+        public Button customeCaptureBtn { get; set; }
         public bool isCaptureError = false;
+        public bool isCustomCapture = false;
+
+        private int offsetX = 0, offsetY = 0, customWidth = 0, customHeight = 0, previousWidth = 0, previousHeight = 0;
+        private double scale = 0.0;
 
         PageClient pageClien = null;
 
@@ -62,8 +67,8 @@ namespace CEFHuaClient
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            string ppapiFlashPath = ConfigurationManager.AppSettings["ppapiFlashPath"];
-            // string ppapiFlashPath = Environment.GetEnvironmentVariable("TEMP") + "\\Release\\pepflashplayer.dll";
+            // string ppapiFlashPath = ConfigurationManager.AppSettings["ppapiFlashPath"];
+            string ppapiFlashPath = Environment.GetEnvironmentVariable("TEMP") + "\\Release\\pepflashplayer.dll";
             if (!File.Exists(ppapiFlashPath))
             {
                 OpenFileDialog openFile = new OpenFileDialog();
@@ -81,7 +86,7 @@ namespace CEFHuaClient
                 }
                 else
                 {
-                    MessageBox.Show("未指定Flash组件文件，登录器无法运行！");
+                    MessageBox.Show("未指定Flash组件文件，登录器无法运行！", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     System.Environment.Exit(-101);
                 }
             }
@@ -161,8 +166,53 @@ namespace CEFHuaClient
             this.Controls.Add(resetFlashPathBtn);
             this.Controls.SetChildIndex(resetFlashPathBtn, 0);
 
-            browser.LoadHtml("<html><head></head><body><embed style='position: absolute; left: 0; top: 0; height: 100%; width: 100%;' src='http://hua.61.com/Client.swf?platform=winform&timestamp="  + DateTime.Now.ToString() +  "'></embed></body></html>", "http://hua.61.com/play.shtml");
+            customeCaptureBtn = new Button();
+            customeCaptureBtn.Text = "自定义截图...";
+            customeCaptureBtn.Left = 400;
+            customeCaptureBtn.Top = 0;
+            customeCaptureBtn.Width = 150;
+            customeCaptureBtn.Height = 25;
+            customeCaptureBtn.Click += CustomCaptureBtn_Click;
+            this.Controls.Add(customeCaptureBtn);
+            this.Controls.SetChildIndex(customeCaptureBtn, 0);
+
+            browser.LoadHtml("<html><head></head><body><embed style='position: absolute; left: 0; top: 0; height: 100%; width: 100%;' src='http://hua.61.com/Client.swf?timestamp="  + DateTime.Now.ToString() +  "'></embed></body></html>", "http://hua.61.com/play.shtml");
             browser.DownloadHandler = new IEDownloadHandler();
+
+        }
+
+        private void CustomCaptureBtn_Click(object sender, EventArgs e)
+        {
+            CustomCapture customCapture = new CustomCapture();
+            if (customCapture.ShowDialog() == DialogResult.OK)
+            {
+                int w = customCapture.w, h = customCapture.h, x = customCapture.x, y = customCapture.y;
+                double scale = customCapture.scale;
+
+                customCapture.Dispose();
+                invokeCustomCapture(w, h, scale, x, y);
+            }
+            
+        }
+
+        private async void invokeCustomCapture(int width, int height, double scale, int offsetX, int offsetY)
+        {
+            int previousW = this.Width, previousH = this.Height;
+            this.customeCaptureBtn.Enabled = false;
+            this.captureBtn.Enabled = false;
+
+            resizeWindow(width, height);
+            // geckoWebBrowser1.Navigate("javascript:void(document.getElementsByTagName('embed')[0].Zoom(" + (100.0 / scale) + "));");
+            browser.ExecuteScriptAsync("javascript:void(document.getElementsByTagName('embed')[0].Zoom(500));");
+            this.offsetX = offsetX;
+            this.offsetY = offsetY;
+            this.isCustomCapture = true;
+            this.previousWidth = previousW;
+            this.previousHeight = previousH;
+            this.customWidth = width;
+            this.customHeight = height;
+            this.scale = scale;
+            timer1.Enabled = true;
 
         }
 
@@ -258,6 +308,30 @@ namespace CEFHuaClient
             }
         }
 
+        /// <summary>
+        /// 老写法
+        /// </summary>
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            browser.ExecuteScriptAsync("javascript:void(document.getElementsByTagName('embed')[0].Zoom(" + 100.0 / this.scale + "));");
+            timer2.Enabled = true;
+            timer1.Enabled = false;
+        }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            browser.ExecuteScriptAsync("javascript:void(document.getElementsByTagName('embed')[0].Pan(" + this.offsetX + "," + this.offsetY + ", 0));");
+            timer3.Enabled = true;
+            timer2.Enabled = false;
+        }
+
+        private void timer3_Tick(object sender, EventArgs e)
+        {
+            this.timer3.Enabled = false;
+            invokeCapture();
+            
+        }
+
         private void CaptureBtn_Click(object sender, EventArgs e)
         {
             invokeCapture();
@@ -313,6 +387,14 @@ namespace CEFHuaClient
                     ms.Write(result.Data, 0, result.Data.Length);
                     // pictureBox1.Image = Image.FromStream(ms);
 
+                    if (isCustomCapture)
+                    {
+                        isCustomCapture = false;
+                        customeCaptureBtn.Enabled = true;
+                        resizeWindow(previousWidth, previousHeight);
+                        browser.ExecuteScriptAsync("javascript:void(document.getElementsByTagName('embed')[0].Zoom(500));");
+                    }
+
                     SaveFileDialog dialog = new SaveFileDialog();
                     dialog.Filter = "PNG图片 (*.PNG)|*.PNG";
                     DialogResult dresult = dialog.ShowDialog();
@@ -321,13 +403,15 @@ namespace CEFHuaClient
                         string path = dialog.FileName;
                         try
                         {
+                            
                             File.WriteAllBytes(path, result.Data);
-                            MessageBox.Show(path + "保存成功。");
+                            MessageBox.Show(path + "保存成功。文件大小：" + decimal.Round(
+                                decimal.Divide(decimal.Parse(result.Data.Length.ToString()), decimal.Parse("1048576")), 2) + "MB", "截图结果", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                         }
                         catch (Exception e)
                         {
-                            MessageBox.Show(path + "保存失败！错误信息：" + e.Message);
+                            MessageBox.Show(path + "保存失败！错误信息：" + e.Message, "截图结果", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
 
@@ -337,7 +421,7 @@ namespace CEFHuaClient
                 isCaptureError = true;
                 captureBtn.Cursor = Cursors.Arrow;
                 captureBtn.Enabled = true;
-                captureBtn.Text = "不能再截了！";
+                captureBtn.Text = "截图";
                 MessageBox.Show("截图过程中出现了未知的错误：" + e.Message, "西一爱服 小花仙登录器", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }

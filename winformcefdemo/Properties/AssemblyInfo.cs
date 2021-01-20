@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("yiming")]
 [assembly: AssemblyProduct("西一爱服小花仙登录器")]
-[assembly: AssemblyCopyright("Copyright ©  2021 yiming")]
+[assembly: AssemblyCopyright("Copyright ©  2021 No.5972")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -33,6 +33,6 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.3.0.37")]
-[assembly: AssemblyFileVersion("0.3.0.37")]
+[assembly: AssemblyVersion("0.4.0.104")]
+[assembly: AssemblyFileVersion("0.4.0.104")]
 [assembly: NeutralResourcesLanguage("zh-CN")]
