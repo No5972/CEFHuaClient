@@ -29,8 +29,13 @@ namespace CEFHuaClient
         public Button captureBtn  { get; set; }
         public Button resetFlashPathBtn { get; set; }
         public Button customeCaptureBtn { get; set; }
+        public Button simulateReplaceBtn { get; set; }
+        public Button debugBtn { get; set; }
         public bool isCaptureError = false;
         public bool isCustomCapture = false;
+
+
+        public MyRequestHandler requestHandler = new MyRequestHandler();
 
         private int offsetX = 0, offsetY = 0, customWidth = 0, customHeight = 0, previousWidth = 0, previousHeight = 0;
         private double scale = 0.0;
@@ -73,7 +78,7 @@ namespace CEFHuaClient
             {
                 OpenFileDialog openFile = new OpenFileDialog();
                 openFile.Filter = "Flash组件文件pepflashplayer.dll (*.dll)|*.dll";
-                openFile.Title = "没有找到Flash文件，或者首次运行需要指定Flash组件文件，文件名通常是pepflashplayer.dll，必须是32位的";
+                openFile.Title = "没有找到Flash文件，或者首次运行需要指定Flash组件文件，文件名通常是pepflashplayer.dll，必须是64位的";
                 DialogResult dresult = openFile.ShowDialog();
                 this.Activate();
                 if (dresult == DialogResult.OK)
@@ -95,6 +100,7 @@ namespace CEFHuaClient
             settings.CefCommandLineArgs.Add("--disable-web-security");//关闭同源策略
             settings.CefCommandLineArgs.Add("--ppapi-flash-version", "32.0.0.453");//PepperFlash\manifest.json中的version
             settings.CefCommandLineArgs.Add("--ppapi-flash-path", ppapiFlashPath);
+            settings.CefCommandLineArgs.Add("--disable-application-cache");
 
             // 必须设置缓存和Cookie否则点击快速进入或者选择服务器时会卡背景logo
             settings.PersistSessionCookies = true;
@@ -176,9 +182,62 @@ namespace CEFHuaClient
             this.Controls.Add(customeCaptureBtn);
             this.Controls.SetChildIndex(customeCaptureBtn, 0);
 
-            browser.LoadHtml("<html><head></head><body><embed style='position: absolute; left: 0; top: 0; height: 100%; width: 100%;' src='http://hua.61.com/Client.swf?timestamp="  + DateTime.Now.ToString() +  "'></embed></body></html>", "http://hua.61.com/play.shtml");
-            browser.DownloadHandler = new IEDownloadHandler();
+            simulateReplaceBtn = new Button();
+            simulateReplaceBtn.Text = "模拟衣服替换...";
+            simulateReplaceBtn.Left = 550;
+            simulateReplaceBtn.Top = 0;
+            simulateReplaceBtn.Width = 150;
+            simulateReplaceBtn.Height = 25;
+            simulateReplaceBtn.Click += SimulateReplaceBtn_Click; ;
+            this.Controls.Add(simulateReplaceBtn);
+            this.Controls.SetChildIndex(simulateReplaceBtn, 0);
 
+            debugBtn = new Button();
+            debugBtn.Text = "调试";
+            debugBtn.Left = 700;
+            debugBtn.Top = 0;
+            debugBtn.Width = 150;
+            debugBtn.Height = 25;
+            debugBtn.Click += DebugBtn_Click;
+            this.Controls.Add(debugBtn);
+            this.Controls.SetChildIndex(debugBtn, 0);
+
+
+            browser.DownloadHandler = new IEDownloadHandler();
+            
+            browser.LoadingStateChanged += Browser_LoadingStateChanged;
+        }
+
+        private void DebugBtn_Click(object sender, EventArgs e)
+        {
+            this.browser.ShowDevTools();
+        }
+
+        private void SimulateReplaceBtn_Click(object sender, EventArgs e)
+        {
+            SimulateReplace simulateReplace = new SimulateReplace(this.requestHandler.dict);
+            if (simulateReplace.ShowDialog() == DialogResult.OK)
+            {
+                List<Dictionary<string, string>> list = simulateReplace.dict;
+                requestHandler.dict = list;
+
+                simulateReplace.Dispose();
+            }
+        }
+
+        private void Browser_LoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
+        {
+            if (!browser.IsLoading)
+            {
+                if (browser.Address != "http://hua.61.com/play.shtml?forceLoadSwf")
+                {
+                    browser.LoadHtml("<html><head></head><body><embed style='position: absolute; left: 0; top: 0; height: 100%; width: 100%;' src='http://hua.61.com/Client.swf?timestamp=" + DateTime.Now.ToString() + "'></embed></body></html>", "http://hua.61.com/play.shtml?forceLoadSwf");
+                }
+                else
+                {
+                    browser.RequestHandler = requestHandler;
+                }
+            } 
         }
 
         private void CustomCaptureBtn_Click(object sender, EventArgs e)
@@ -349,8 +408,19 @@ namespace CEFHuaClient
                     var requestContext = browser.GetBrowser().GetHost().RequestContext;
                     requestContext.SetPreference("profile.default_content_setting_values.plugins", 1, out error);
                 });
-                // browser.ShowDevTools();
+
+
+                Task.Run(async () =>
+                    await DevToolsExtensions.ExecuteDevToolsMethodAsync(browser.GetBrowser(), 0, "Network.setCacheDisabled", new Dictionary<string, object>
+                    {
+                        {
+                            "cacheDisabled", true
+                        }
+                    })
+                );
                 
+
+                // browser.ShowDevTools();
             }
         }
 

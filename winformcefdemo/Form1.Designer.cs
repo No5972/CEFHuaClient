@@ -58,7 +58,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "CEFHuaClientFrame";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "西一爱服 小花仙登录器 V0.4 BY 鄙人 贴吧/B站：wujiuqier Github：No5972";
+            this.Text = "西一爱服 小花仙登录器 V0.5 BY 鄙人 贴吧/B站：wujiuqier Github：No5972";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResizeEnd += new System.EventHandler(this.Form1_ResizeEnd);
             this.ResumeLayout(false);
