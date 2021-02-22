@@ -3,6 +3,7 @@
 
 ![image](https://github.com/No5972/CEFHuaClient/blob/main/screenshots/mainwindow.png)
 ![image](https://github.com/No5972/CEFHuaClient/blob/main/screenshots/customizecapture.png)
+![image](https://github.com/No5972/CEFHuaClient/blob/main/screenshots/simultereplace.png)
 
-# 改口小花仙登录器体积较小，但不支持自定义分辨率截图功能
+# 改口小花仙登录器体积较小，但不支持自定义分辨率截图功能、模拟衣服替换功能
 [https://github.com/No5972/GeckoHuaClient](https://github.com/No5972/GeckoHuaClient)
