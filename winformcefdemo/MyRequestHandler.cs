@@ -41,6 +41,16 @@ namespace CEFHuaClient
         /// </summary>
         public List<Dictionary<string, string>> dict = new List<Dictionary<string, string>>();
 
+        public delegate void InterceptedAnIcon(string iconId);
+
+        public InterceptedAnIcon interceptedAnIcon;
+
+        void interceptedAnIcon1(string iconId)
+        {
+            this.interceptedAnIcon(iconId);
+        }
+
+
         protected override bool OnBeforeBrowse(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, bool userGesture,
             bool isRedirect)
         {
@@ -51,14 +61,20 @@ namespace CEFHuaClient
         protected override IResourceRequestHandler GetResourceRequestHandler(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame,
             IRequest request, bool isNavigation, bool isDownload, string requestInitiator, ref bool disableDefaultHandling)
         {
+            MyResourceRequestHandler resourceRequestHandler = new MyResourceRequestHandler(dict);
+            resourceRequestHandler.interceptedAnIcon = new MyResourceRequestHandler.InterceptedAnIcon(this.interceptedAnIcon1);
             // 先调用基类的实现，断点调试
-            return new MyResourceRequestHandler(dict);
+            return resourceRequestHandler;
         }
     }
 
     class MyResourceRequestHandler : ResourceRequestHandler
     {
         private List<Dictionary<string, string>> dict;
+
+        public delegate void InterceptedAnIcon(string iconId);
+
+        public InterceptedAnIcon interceptedAnIcon;
 
         public MyResourceRequestHandler(List<Dictionary<string, string>> dict)
         {
@@ -67,6 +83,11 @@ namespace CEFHuaClient
 
         protected override IResourceHandler GetResourceHandler(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request)
         {
+            if (request.Url.Contains("/cloth/icon/"))
+            {
+                this.interceptedAnIcon(request.Url);
+            }
+
             foreach (Dictionary<string, string> x in this.dict)
             {
                 x.TryGetValue("part", out string part);

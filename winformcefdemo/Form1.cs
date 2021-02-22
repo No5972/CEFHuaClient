@@ -15,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using winformcefdemo;
@@ -33,7 +34,8 @@ namespace CEFHuaClient
         public Button debugBtn { get; set; }
         public bool isCaptureError = false;
         public bool isCustomCapture = false;
-
+        public ContextMenuStrip simulateReplaceMenu;
+        public MonitorIcons monitorIcons;
 
         public MyRequestHandler requestHandler = new MyRequestHandler();
 
@@ -202,10 +204,54 @@ namespace CEFHuaClient
             this.Controls.Add(debugBtn);
             this.Controls.SetChildIndex(debugBtn, 0);
 
+            simulateReplaceMenu = new ContextMenuStrip();
+            simulateReplaceMenu.Items.Add("模拟衣服替换(&R)...");
+            simulateReplaceMenu.Items.Add("查找部件ID(&M)...");
+            simulateReplaceMenu.ItemClicked += SimulateReplaceMenu_ItemClicked;
+
+            monitorIcons = new MonitorIcons();
+
 
             browser.DownloadHandler = new IEDownloadHandler();
             
             browser.LoadingStateChanged += Browser_LoadingStateChanged;
+        }
+
+        private void SimulateReplaceMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            this.simulateReplaceMenu.Hide();
+            switch (e.ClickedItem.Text)
+            {
+                case "模拟衣服替换(&R)...":
+                    SimulateReplace simulateReplace = new SimulateReplace(this.requestHandler.dict);
+                    if (simulateReplace.ShowDialog() == DialogResult.OK)
+                    {
+                        List<Dictionary<string, string>> list = simulateReplace.dict;
+                        requestHandler.dict = list;
+
+                        simulateReplace.Dispose();
+                    }
+                    break;
+                case "查找部件ID(&M)...":
+                    if (monitorIcons.IsDisposed)
+                    {
+                        monitorIcons = new MonitorIcons();
+                    }
+                    monitorIcons.Show();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void MonitorMenu_Click(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void SettingMenu_Click(object sender, EventArgs e)
+        {
+            
         }
 
         private void DebugBtn_Click(object sender, EventArgs e)
@@ -215,14 +261,7 @@ namespace CEFHuaClient
 
         private void SimulateReplaceBtn_Click(object sender, EventArgs e)
         {
-            SimulateReplace simulateReplace = new SimulateReplace(this.requestHandler.dict);
-            if (simulateReplace.ShowDialog() == DialogResult.OK)
-            {
-                List<Dictionary<string, string>> list = simulateReplace.dict;
-                requestHandler.dict = list;
-
-                simulateReplace.Dispose();
-            }
+            simulateReplaceMenu.Show(MousePosition.X, MousePosition.Y);
         }
 
         private void Browser_LoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
@@ -235,9 +274,24 @@ namespace CEFHuaClient
                 }
                 else
                 {
+                    requestHandler.interceptedAnIcon = new MyRequestHandler.InterceptedAnIcon(InterceptedAnIcon);
                     browser.RequestHandler = requestHandler;
                 }
             } 
+        }
+
+        private void InterceptedAnIcon(string iconId)
+        {
+            Regex r = new Regex(@"(\/([1-9]\d*))");
+            Match m = r.Match(iconId);
+            if (m.Success)
+            {
+                // MessageBox.Show("拦截到了图标: " + m.Groups[0].Value.Replace("/", ""));
+                if (!monitorIcons.IsDisposed)
+                {
+                    monitorIcons.addMonitoredItem(m.Groups[0].Value.Replace("/", ""));
+                }
+            }
         }
 
         private void CustomCaptureBtn_Click(object sender, EventArgs e)
