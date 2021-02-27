@@ -2,6 +2,7 @@
 using CefSharp.DevTools.Page;
 using CefSharp.WinForms;
 using Newtonsoft.Json;
+using Sunny.UI;
 // using CefSharp.OffScreen;
 using System;
 using System.Collections.Generic;
@@ -26,12 +27,12 @@ namespace CEFHuaClient
     {
         public ChromiumWebBrowser browser { get; set; }
         public Panel panel { get; set; }
-        public ComboBox resolution { get; set; }
-        public Button captureBtn  { get; set; }
-        public Button resetFlashPathBtn { get; set; }
-        public Button customeCaptureBtn { get; set; }
-        public Button simulateReplaceBtn { get; set; }
-        public Button debugBtn { get; set; }
+        public UIComboBox resolution { get; set; }
+        public UIButton captureBtn  { get; set; }
+        public UIButton resetFlashPathBtn { get; set; }
+        public UIButton customeCaptureBtn { get; set; }
+        public UIButton simulateReplaceBtn { get; set; }
+        public UIButton debugBtn { get; set; }
         public bool isCaptureError = false;
         public bool isCustomCapture = false;
         public ContextMenuStrip simulateReplaceMenu;
@@ -41,6 +42,8 @@ namespace CEFHuaClient
 
         private int offsetX = 0, offsetY = 0, customWidth = 0, customHeight = 0, previousWidth = 0, previousHeight = 0;
         private double scale = 0.0;
+
+        private string currentComboBoxResolution = "";
 
         PageClient pageClien = null;
 
@@ -135,7 +138,7 @@ namespace CEFHuaClient
             this.Controls.Add(panel);
 
 
-            captureBtn = new Button();
+            captureBtn = new UIButton();
             captureBtn.Text = "截图";
             captureBtn.Left = 0;
             captureBtn.Top = 0;
@@ -146,7 +149,7 @@ namespace CEFHuaClient
             this.Controls.Add(captureBtn);
             this.Controls.SetChildIndex(captureBtn, 0);
 
-            resolution = new ComboBox();
+            resolution = new UIComboBox();
             resolution.Items.Add("1366x768");
             resolution.Items.Add("1920x1080");
             resolution.Items.Add("2560x1440");
@@ -156,17 +159,18 @@ namespace CEFHuaClient
             resolution.Items.Add("自定义...");
             resolution.Left = 150;
             resolution.Top = 0;
-            resolution.Width = 100;
-            resolution.Height = 30;
-            resolution.DropDownStyle = ComboBoxStyle.DropDownList;
+            resolution.Width = 150;
+            resolution.Height = 25;
+            resolution.DropDownStyle = UIDropDownStyle.DropDownList;
             resolution.SelectedIndex = 0;
             resolution.SelectedIndexChanged += Resolution_SelectedIndexChanged;
+            this.currentComboBoxResolution = resolution.SelectedItem.ToString();
             this.Controls.Add(resolution);
             this.Controls.SetChildIndex(resolution, 0);
 
-            resetFlashPathBtn = new Button();
+            resetFlashPathBtn = new UIButton();
             resetFlashPathBtn.Text = "重置Flash路径";
-            resetFlashPathBtn.Left = 250;
+            resetFlashPathBtn.Left = 300;
             resetFlashPathBtn.Top = 0;
             resetFlashPathBtn.Width = 150;
             resetFlashPathBtn.Height = 25;
@@ -174,9 +178,9 @@ namespace CEFHuaClient
             this.Controls.Add(resetFlashPathBtn);
             this.Controls.SetChildIndex(resetFlashPathBtn, 0);
 
-            customeCaptureBtn = new Button();
+            customeCaptureBtn = new UIButton();
             customeCaptureBtn.Text = "自定义截图...";
-            customeCaptureBtn.Left = 400;
+            customeCaptureBtn.Left = 450;
             customeCaptureBtn.Top = 0;
             customeCaptureBtn.Width = 150;
             customeCaptureBtn.Height = 25;
@@ -184,9 +188,9 @@ namespace CEFHuaClient
             this.Controls.Add(customeCaptureBtn);
             this.Controls.SetChildIndex(customeCaptureBtn, 0);
 
-            simulateReplaceBtn = new Button();
+            simulateReplaceBtn = new UIButton();
             simulateReplaceBtn.Text = "模拟衣服替换...";
-            simulateReplaceBtn.Left = 550;
+            simulateReplaceBtn.Left = 600;
             simulateReplaceBtn.Top = 0;
             simulateReplaceBtn.Width = 150;
             simulateReplaceBtn.Height = 25;
@@ -194,9 +198,9 @@ namespace CEFHuaClient
             this.Controls.Add(simulateReplaceBtn);
             this.Controls.SetChildIndex(simulateReplaceBtn, 0);
 
-            debugBtn = new Button();
+            debugBtn = new UIButton();
             debugBtn.Text = "调试";
-            debugBtn.Left = 700;
+            debugBtn.Left = 750;
             debugBtn.Top = 0;
             debugBtn.Width = 150;
             debugBtn.Height = 25;
@@ -271,6 +275,7 @@ namespace CEFHuaClient
                 if (browser.Address != "http://hua.61.com/play.shtml?forceLoadSwf")
                 {
                     browser.LoadHtml("<html><head></head><body><embed style='position: absolute; left: 0; top: 0; height: 100%; width: 100%;' src='http://hua.61.com/Client.swf?timestamp=" + DateTime.Now.ToString() + "'></embed></body></html>", "http://hua.61.com/play.shtml?forceLoadSwf");
+                    this.Text = this.Text.Replace("若长时间未加载出游戏，请确认是否正确选择了Flash组件位置", "");
                 }
                 else
                 {
@@ -383,6 +388,12 @@ namespace CEFHuaClient
 
         private void Resolution_SelectedIndexChanged(object sender, EventArgs e)
         {
+            // MessageBox.Show(((UIComboBox)sender).SelectedItem.ToString());
+            string callbackSelectedItem = ((UIComboBox)sender).SelectedItem.ToString();
+            if (callbackSelectedItem == this.currentComboBoxResolution)
+            {
+                return;
+            }
             switch (resolution.SelectedItem)
             {
                 case "128x72":
@@ -415,10 +426,22 @@ namespace CEFHuaClient
                     {
                         resizeWindow(resolution.thisWidth, resolution.thisHeight);
                         resolution.Dispose();
+                    } else
+                    {
+                        Timer tSwitch = new Timer();
+                        tSwitch.Interval = 50;
+                        tSwitch.Tick += (senderT, eT) =>
+                        {
+                            this.Activate();
+                            tSwitch.Enabled = false;
+                            tSwitch.Dispose();
+                        };
+                        tSwitch.Enabled = true;
                     }
                     break;
                 default: break;
             }
+            this.currentComboBoxResolution = ((UIComboBox)sender).SelectedItem.ToString();
         }
 
         /// <summary>

@@ -20,9 +20,9 @@ namespace winformcefdemo
         public MonitorIcons()
         {
             InitializeComponent();
-            Panel panel = new Panel();
+            // Panel panel = new Panel();
             browser = new ChromiumWebBrowser("about:blank");
-            panel.SetBounds(242, 13, 360, 360);
+            // panel.SetBounds(242, 13, 360, 360);
             panel.Controls.Add(browser);
             this.Controls.Add(panel);
             Control.CheckForIllegalCrossThreadCalls = false;
@@ -62,11 +62,21 @@ namespace winformcefdemo
             if (this.isMonitoring)
             {
                 this.isMonitoring = false;
-                button1.BackColor = Color.Yellow;
+                button1.FillColor = Color.Yellow;
+                button1.FillHoverColor = Color.LightYellow;
+                button1.FillPressColor = Color.Olive;
+                button1.ForeColor = Color.Black;
+                button1.ForeHoverColor = Color.Black;
+                button1.ForePressColor = Color.Black;
             } else
             {
                 this.isMonitoring = true;
-                button1.BackColor = Color.Red;
+                button1.FillColor = Color.Red;
+                button1.FillHoverColor = Color.Coral;
+                button1.FillPressColor = Color.DarkRed;
+                button1.ForeColor = Color.White;
+                button1.ForeHoverColor = Color.White;
+                button1.ForePressColor = Color.White;
             }
         }
     }

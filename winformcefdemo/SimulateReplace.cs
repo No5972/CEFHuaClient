@@ -45,6 +45,7 @@ namespace winformcefdemo
                     case "item": ee = listView1.Items.Add("道具"); break;
                     case "feet": ee = listView1.Items.Add("足部"); break;
                     case "neck": ee = listView1.Items.Add("项链"); break;
+                    case "earring": ee = listView1.Items.Add("耳环"); break;
                     case "eyes": ee = listView1.Items.Add("眼睛"); break;
                     case "brow": ee = listView1.Items.Add("眉毛"); break;
                     case "mouth": ee = listView1.Items.Add("嘴巴"); break;
@@ -98,6 +99,7 @@ namespace winformcefdemo
                     case "道具": part = "道具"; break;
                     case "足部": part = "足部"; break;
                     case "项链": part = "项链"; break;
+                    case "耳环": part = "耳环"; break;
 
                     case "眼睛": part = "眼睛"; break;
                     case "眉毛": part = "眉毛"; break;
@@ -130,6 +132,7 @@ namespace winformcefdemo
                     case "道具": this.comboBox1.SelectedItem = "道具"; break;
                     case "足部": this.comboBox1.SelectedItem = "足部"; break;
                     case "项链": this.comboBox1.SelectedItem = "项链"; break;
+                    case "耳环": this.comboBox1.SelectedItem = "耳环"; break;
 
                     case "眼睛": this.comboBox1.SelectedItem = "眼睛"; break;
                     case "眉毛": this.comboBox1.SelectedItem = "眉毛"; break;
@@ -162,6 +165,7 @@ namespace winformcefdemo
                     case "道具": part = "item"; break;
                     case "足部": part = "feet"; break;
                     case "项链": part = "neck"; break;
+                    case "耳环": part = "earring"; break;
 
                     case "眼睛": part = "eyes"; break;
                     case "眉毛": part = "brow"; break;
@@ -198,6 +202,7 @@ namespace winformcefdemo
                 case "道具": listView1.SelectedItems[0].SubItems[0].Text = "道具"; break;
                 case "足部": listView1.SelectedItems[0].SubItems[0].Text = "足部"; break;
                 case "项链": listView1.SelectedItems[0].SubItems[0].Text = "项链"; break;
+                case "耳环": listView1.SelectedItems[0].SubItems[0].Text = "耳环"; break;
 
                 case "眼睛": listView1.SelectedItems[0].SubItems[0].Text = "眼睛"; break;
                 case "眉毛": listView1.SelectedItems[0].SubItems[0].Text = "眉毛"; break;

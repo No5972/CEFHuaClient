@@ -27,6 +27,7 @@ namespace CEFHuaClient
         /// 道具 item <br/>
         /// 足部 feet <br/>
         /// 项链 neck <br/>
+        /// 耳环 earring <br/>
         /// <br/>
         /// 眼睛 eyes <br/>
         /// 眉毛 brow <br/>
@@ -108,6 +109,7 @@ namespace CEFHuaClient
                     case "item":
                     case "feet":
                     case "neck":
+                    case "earring":
 
                     case "eyes":
                     case "brow":
