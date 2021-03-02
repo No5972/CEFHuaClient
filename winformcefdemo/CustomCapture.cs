@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sunny.UI;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,7 +11,7 @@ using System.Windows.Forms;
 
 namespace winformcefdemo
 {
-    public partial class CustomCapture : Form
+    public partial class CustomCapture : UIForm
     {
         public int w = 0, h = 0, x = 0, y = 0;
 

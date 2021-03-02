@@ -1,5 +1,6 @@
 ﻿using CefSharp;
 using CefSharp.WinForms;
+using Sunny.UI;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,7 +13,7 @@ using System.Windows.Forms;
 
 namespace winformcefdemo
 {
-    public partial class MonitorIcons : Form
+    public partial class MonitorIcons : UIForm
     {
         public ChromiumWebBrowser browser { get; set; }
         private bool isMonitoring { get; set; } = true;

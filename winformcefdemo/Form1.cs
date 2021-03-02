@@ -28,11 +28,11 @@ namespace CEFHuaClient
         public ChromiumWebBrowser browser { get; set; }
         public Panel panel { get; set; }
         public UIComboBox resolution { get; set; }
-        public UIButton captureBtn  { get; set; }
-        public UIButton resetFlashPathBtn { get; set; }
-        public UIButton customeCaptureBtn { get; set; }
-        public UIButton simulateReplaceBtn { get; set; }
-        public UIButton debugBtn { get; set; }
+        public UISymbolButton captureBtn  { get; set; }
+        public UISymbolButton resetFlashPathBtn { get; set; }
+        public UISymbolButton customeCaptureBtn { get; set; }
+        public UISymbolButton simulateReplaceBtn { get; set; }
+        public UISymbolButton debugBtn { get; set; }
         public bool isCaptureError = false;
         public bool isCustomCapture = false;
         public ContextMenuStrip simulateReplaceMenu;
@@ -56,6 +56,9 @@ namespace CEFHuaClient
         [DllImport("user32.dll")]
         private static extern int GetWindowRect(IntPtr hwnd, ref RECT lpRect);
 
+        [DllImport("user32.dll", EntryPoint = "FindWindow")]
+        private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
         [DllImport("gdi32.dll")]
         private static extern int BitBlt(
             IntPtr hdcDest,     // handle to destination DC (device context)
@@ -78,7 +81,7 @@ namespace CEFHuaClient
         private void Form1_Load(object sender, EventArgs e)
         {
             // string ppapiFlashPath = ConfigurationManager.AppSettings["ppapiFlashPath"];
-            string ppapiFlashPath = Environment.GetEnvironmentVariable("TEMP") + "\\Release\\pepflashplayer.dll";
+            string ppapiFlashPath = System.AppDomain.CurrentDomain.SetupInformation.ApplicationBase + "pepflashplayer.dll";
             if (!File.Exists(ppapiFlashPath))
             {
                 OpenFileDialog openFile = new OpenFileDialog();
@@ -138,12 +141,15 @@ namespace CEFHuaClient
             this.Controls.Add(panel);
 
 
-            captureBtn = new UIButton();
+            captureBtn = new UISymbolButton();
             captureBtn.Text = "截图";
+            captureBtn.Font = new Font("Microsoft Yahei", 11);
+            captureBtn.Symbol = 61636;
             captureBtn.Left = 0;
             captureBtn.Top = 0;
             captureBtn.Width = 150;
             captureBtn.Height = 25;
+            captureBtn.RectColor = captureBtn.RectHoverColor = captureBtn.RectPressColor = captureBtn.RectDisableColor = UIColor.White;
             captureBtn.Click += CaptureBtn_Click;
             captureBtn.MouseUp += CaptureBtn_MouseUp;
             this.Controls.Add(captureBtn);
@@ -168,42 +174,54 @@ namespace CEFHuaClient
             this.Controls.Add(resolution);
             this.Controls.SetChildIndex(resolution, 0);
 
-            resetFlashPathBtn = new UIButton();
+            resetFlashPathBtn = new UISymbolButton();
             resetFlashPathBtn.Text = "重置Flash路径";
+            resetFlashPathBtn.Font = new Font("Microsoft Yahei", 11);
+            resetFlashPathBtn.Symbol = 61714;
             resetFlashPathBtn.Left = 300;
             resetFlashPathBtn.Top = 0;
             resetFlashPathBtn.Width = 150;
             resetFlashPathBtn.Height = 25;
+            resetFlashPathBtn.RectColor = resetFlashPathBtn.RectHoverColor = resetFlashPathBtn.RectPressColor = UIColor.White;
             resetFlashPathBtn.Click += ResetFlashPathBtn_Click;
             this.Controls.Add(resetFlashPathBtn);
             this.Controls.SetChildIndex(resetFlashPathBtn, 0);
 
-            customeCaptureBtn = new UIButton();
+            customeCaptureBtn = new UISymbolButton();
             customeCaptureBtn.Text = "自定义截图...";
+            customeCaptureBtn.Font = new Font("Microsoft Yahei", 11);
             customeCaptureBtn.Left = 450;
             customeCaptureBtn.Top = 0;
             customeCaptureBtn.Width = 150;
             customeCaptureBtn.Height = 25;
+            customeCaptureBtn.Symbol = 61918;
+            customeCaptureBtn.RectColor = customeCaptureBtn.RectDisableColor = customeCaptureBtn.RectHoverColor = customeCaptureBtn.RectPressColor = UIColor.White;
             customeCaptureBtn.Click += CustomCaptureBtn_Click;
             this.Controls.Add(customeCaptureBtn);
             this.Controls.SetChildIndex(customeCaptureBtn, 0);
 
-            simulateReplaceBtn = new UIButton();
-            simulateReplaceBtn.Text = "模拟衣服替换...";
+            simulateReplaceBtn = new UISymbolButton();
+            simulateReplaceBtn.Text = "模拟衣服替换";
+            simulateReplaceBtn.Font = new Font("Microsoft Yahei", 11);
             simulateReplaceBtn.Left = 600;
             simulateReplaceBtn.Top = 0;
             simulateReplaceBtn.Width = 150;
             simulateReplaceBtn.Height = 25;
+            simulateReplaceBtn.Symbol = 57378;
+            simulateReplaceBtn.RectColor = simulateReplaceBtn.RectHoverColor = simulateReplaceBtn.RectPressColor = UIColor.White;
             simulateReplaceBtn.Click += SimulateReplaceBtn_Click; ;
             this.Controls.Add(simulateReplaceBtn);
             this.Controls.SetChildIndex(simulateReplaceBtn, 0);
 
-            debugBtn = new UIButton();
+            debugBtn = new UISymbolButton();
             debugBtn.Text = "调试";
+            debugBtn.Font = new Font("Microsoft Yahei", 11);
             debugBtn.Left = 750;
             debugBtn.Top = 0;
             debugBtn.Width = 150;
             debugBtn.Height = 25;
+            debugBtn.Symbol = 61729;
+            debugBtn.RectColor = debugBtn.RectHoverColor = debugBtn.RectPressColor = UIColor.White;
             debugBtn.Click += DebugBtn_Click;
             this.Controls.Add(debugBtn);
             this.Controls.SetChildIndex(debugBtn, 0);
@@ -580,7 +598,8 @@ namespace CEFHuaClient
             Process[] processes = Process.GetProcesses(".");
             foreach (var process in processes)
             {
-                var handle = process.MainWindowHandle;
+                // var handle = process.MainWindowHandle;
+                var handle = FindWindow(null, this.Text);
                 var form = Control.FromHandle(handle);
 
                 if (form == null) continue;
