@@ -271,4 +271,9 @@
   <Import Project="..\packages\CefSharp.Common.86.0.241\build\CefSharp.Common.targets" Condition="Exists('..\packages\CefSharp.Common.86.0.241\build\CefSharp.Common.targets')" />
   <Import Project="..\packages\CefSharp.OffScreen.86.0.241\build\CefSharp.OffScreen.targets" Condition="Exists('..\packages\CefSharp.OffScreen.86.0.241\build\CefSharp.OffScreen.targets')" />
   <Import Project="..\packages\CefSharp.Wpf.86.0.241\build\CefSharp.Wpf.targets" Condition="Exists('..\packages\CefSharp.Wpf.86.0.241\build\CefSharp.Wpf.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>del /f /q /a $(TargetDir)*.xml
+del /f /q /a $(TargetDir)*.pdb
+rmdir /s /q $(TargetDir)Temp</PostBuildEvent>
+  </PropertyGroup>
 </Project>
