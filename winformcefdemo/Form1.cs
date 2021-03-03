@@ -565,7 +565,10 @@ namespace CEFHuaClient
 
         private void CaptureBtn_Click(object sender, EventArgs e)
         {
-            invokeCapture();
+            if (((MouseEventArgs)e).Button == MouseButtons.Left)
+            {
+                invokeCapture();
+            }
         }
 
         private void Browser_IsBrowserInitializedChanged(object sender, EventArgs e)
