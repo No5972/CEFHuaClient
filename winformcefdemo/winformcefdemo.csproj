@@ -175,7 +175,6 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="IEDownloadHandler.cs" />
     <Compile Include="MonitorIcons.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -234,6 +233,11 @@
   <ItemGroup>
     <Content Include="CEF.ico" />
     <Content Include="pepflashplayer.dll" />
+    <EmbeddedResource Include="Resources\blackBg.swf" />
+    <EmbeddedResource Include="Resources\blueBg.swf" />
+    <EmbeddedResource Include="Resources\greenBg.swf" />
+    <EmbeddedResource Include="Resources\redBg.swf" />
+    <EmbeddedResource Include="Resources\whiteBg.swf" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">

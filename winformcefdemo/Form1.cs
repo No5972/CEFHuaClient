@@ -33,9 +33,17 @@ namespace CEFHuaClient
         public UISymbolButton customeCaptureBtn { get; set; }
         public UISymbolButton simulateReplaceBtn { get; set; }
         public UISymbolButton debugBtn { get; set; }
+        public UISymbolButton customeBgBtn { get; set; }
         public bool isCaptureError = false;
         public bool isCustomCapture = false;
         public ContextMenuStrip simulateReplaceMenu;
+        public ContextMenuStrip customeBgMenu;
+        public ToolStripMenuItem noReplaceBg = new ToolStripMenuItem("不替换");
+        public ToolStripMenuItem whiteBg = new ToolStripMenuItem("白色");
+        public ToolStripMenuItem blackBg = new ToolStripMenuItem("黑色");
+        public ToolStripMenuItem redBg = new ToolStripMenuItem("红色");
+        public ToolStripMenuItem greenBg = new ToolStripMenuItem("绿色");
+        public ToolStripMenuItem blueBg = new ToolStripMenuItem("蓝色");
         public MonitorIcons monitorIcons;
 
         public MyRequestHandler requestHandler = new MyRequestHandler();
@@ -201,7 +209,7 @@ namespace CEFHuaClient
             this.Controls.SetChildIndex(customeCaptureBtn, 0);
 
             simulateReplaceBtn = new UISymbolButton();
-            simulateReplaceBtn.Text = "模拟衣服替换";
+            simulateReplaceBtn.Text = "模拟衣服替换▾";
             simulateReplaceBtn.Font = new Font("Microsoft Yahei", 11);
             simulateReplaceBtn.Left = 600;
             simulateReplaceBtn.Top = 0;
@@ -226,17 +234,86 @@ namespace CEFHuaClient
             this.Controls.Add(debugBtn);
             this.Controls.SetChildIndex(debugBtn, 0);
 
+            customeBgBtn = new UISymbolButton();
+            customeBgBtn.Text = "自定义背景▾";
+            customeBgBtn.Font = new Font("Microsoft Yahei", 11);
+            customeBgBtn.Left = 900;
+            customeBgBtn.Top = 0;
+            customeBgBtn.Width = 150;
+            customeBgBtn.Height = 25;
+            customeBgBtn.Symbol = 61502;
+            customeBgBtn.RectColor = customeBgBtn.RectHoverColor = customeBgBtn.RectPressColor = UIColor.White;
+            customeBgBtn.Click += CustomeBgBtn_Click;
+            this.Controls.Add(customeBgBtn);
+            this.Controls.SetChildIndex(customeBgBtn, 0);
+
             simulateReplaceMenu = new ContextMenuStrip();
             simulateReplaceMenu.Items.Add("模拟衣服替换(&R)...");
             simulateReplaceMenu.Items.Add("查找部件ID(&M)...");
             simulateReplaceMenu.ItemClicked += SimulateReplaceMenu_ItemClicked;
 
+            customeBgMenu = new ContextMenuStrip();
+            noReplaceBg.Checked = true;
+            customeBgMenu.Items.Add(noReplaceBg);
+            customeBgMenu.Items.Add(whiteBg);
+            customeBgMenu.Items.Add(blackBg);
+            customeBgMenu.Items.Add(redBg);
+            customeBgMenu.Items.Add(greenBg);
+            customeBgMenu.Items.Add(blueBg);
+            customeBgMenu.Items.Add("此功能必须戴一个背景秀才有效");
+            customeBgMenu.ItemClicked += CustomeBgMenu_ItemClicked;
+
             monitorIcons = new MonitorIcons();
 
 
-            browser.DownloadHandler = new IEDownloadHandler();
+            // browser.DownloadHandler = new IEDownloadHandler();
             
             browser.LoadingStateChanged += Browser_LoadingStateChanged;
+        }
+
+        private void CustomeBgMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            this.customeBgMenu.Hide();
+            if (e.ClickedItem.Text == "此功能必须戴一个背景秀才有效") return;
+            this.noReplaceBg.Checked = false;
+            this.whiteBg.Checked = false;
+            this.blackBg.Checked = false;
+            this.redBg.Checked = false;
+            this.greenBg.Checked = false;
+            this.blueBg.Checked = false;
+            switch (e.ClickedItem.Text) {
+                case "不替换":
+                    this.requestHandler.bgResourceName = "";
+                    this.noReplaceBg.Checked = true;
+                    break;
+                case "黑色":
+                    this.requestHandler.bgResourceName = "blackBg.swf";
+                    this.blackBg.Checked = true;
+                    break;
+                case "白色":
+                    this.requestHandler.bgResourceName = "whiteBg.swf";
+                    this.whiteBg.Checked = true;
+                    break;
+                case "红色":
+                    this.requestHandler.bgResourceName = "redBg.swf";
+                    this.redBg.Checked = true;
+                    break;
+                case "绿色":
+                    this.requestHandler.bgResourceName = "greenBg.swf";
+                    this.greenBg.Checked = true;
+                    break;
+                case "蓝色":
+                    this.requestHandler.bgResourceName = "blueBg.swf";
+                    this.blueBg.Checked = true;
+                    break;
+                default: break;
+            }
+            return;
+        }
+
+        private void CustomeBgBtn_Click(object sender, EventArgs e)
+        {
+            customeBgMenu.Show(MousePosition.X, MousePosition.Y);
         }
 
         private void SimulateReplaceMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace CEFHuaClient
@@ -42,6 +43,8 @@ namespace CEFHuaClient
         /// </summary>
         public List<Dictionary<string, string>> dict = new List<Dictionary<string, string>>();
 
+        public string bgResourceName = "";
+
         public delegate void InterceptedAnIcon(string iconId);
 
         public InterceptedAnIcon interceptedAnIcon;
@@ -62,7 +65,7 @@ namespace CEFHuaClient
         protected override IResourceRequestHandler GetResourceRequestHandler(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame,
             IRequest request, bool isNavigation, bool isDownload, string requestInitiator, ref bool disableDefaultHandling)
         {
-            MyResourceRequestHandler resourceRequestHandler = new MyResourceRequestHandler(dict);
+            MyResourceRequestHandler resourceRequestHandler = new MyResourceRequestHandler(dict, this.bgResourceName);
             resourceRequestHandler.interceptedAnIcon = new MyResourceRequestHandler.InterceptedAnIcon(this.interceptedAnIcon1);
             // 先调用基类的实现，断点调试
             return resourceRequestHandler;
@@ -73,6 +76,8 @@ namespace CEFHuaClient
     {
         private List<Dictionary<string, string>> dict;
 
+        public string bgResourceName = "";
+
         public delegate void InterceptedAnIcon(string iconId);
 
         public InterceptedAnIcon interceptedAnIcon;
@@ -80,6 +85,17 @@ namespace CEFHuaClient
         public MyResourceRequestHandler(List<Dictionary<string, string>> dict)
         {
             this.dict = dict;
+        }
+
+        public MyResourceRequestHandler(List<Dictionary<string, string>> dict, string bgResourceName)
+        {
+            this.dict = dict;
+            this.bgResourceName = bgResourceName;
+        }
+
+        public MyResourceRequestHandler(string bgResourceName)
+        {
+            this.bgResourceName = bgResourceName;
         }
 
         protected override IResourceHandler GetResourceHandler(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request)
@@ -115,7 +131,7 @@ namespace CEFHuaClient
                     case "brow":
                     case "mouth":
 
-                        if (request.Url.Contains(original) && 
+                        if (request.Url.Contains(original) &&
                            (request.Url.Contains("cloth/swf/left/") ||
                             request.Url.Contains("cloth/swf/right/") ||
                             request.Url.Contains("cloth/swf/body/") ||
@@ -146,9 +162,20 @@ namespace CEFHuaClient
                 }
             }
 
+            if (request.Url.Contains("cloth/swf/bg/")) // 自定义背景
+            {
+                if (string.IsNullOrWhiteSpace(this.bgResourceName)) 
+                {
+                    return base.GetResourceHandler(chromiumWebBrowser, browser, frame, request);
+                }
+                else
+                {
+                    return new MyResourceHandler(this.bgResourceName, true);
+                }
+            }
 
 
-            
+
 
             return base.GetResourceHandler(chromiumWebBrowser, browser, frame, request);
         }
@@ -157,13 +184,22 @@ namespace CEFHuaClient
     class MyResourceHandler : IResourceHandler
     {
         private readonly string _localResourceFileName;
+        private readonly string _embedResourceName;
+        private readonly bool _isUsingEmbedResource;
         private byte[] _localResourceData;
         private int _dataReadCount;
 
         public MyResourceHandler(string localResourceFileName)
         {
+            this._isUsingEmbedResource = false;
             this._localResourceFileName = localResourceFileName;
             this._dataReadCount = 0;
+        }
+
+        public MyResourceHandler(string embedResourceName, bool isUsingEmbedResource)
+        {
+            this._embedResourceName = embedResourceName;
+            this._isUsingEmbedResource = isUsingEmbedResource;
         }
 
         public void Dispose()
@@ -184,6 +220,17 @@ namespace CEFHuaClient
 
         public void GetResponseHeaders(IResponse response, out long responseLength, out string redirectUrl)
         {
+            if (_isUsingEmbedResource)
+            {
+                Assembly assembly = Assembly.GetExecutingAssembly();
+                System.IO.Stream stream = assembly.GetManifestResourceStream("winformcefdemo.Resources." + this._embedResourceName);
+                long length = stream.Length;
+                this._localResourceData = new byte[length];
+                new BinaryReader(stream).Read(this._localResourceData, 0, this._localResourceData.Length);
+                responseLength = 0;
+                redirectUrl = null;
+                return;
+            }
             responseLength = this.GetHttpLength(_localResourceFileName);
             redirectUrl = _localResourceFileName;
         }
