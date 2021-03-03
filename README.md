@@ -4,6 +4,8 @@
 注意：
 * 不兼容屏幕字体缩放125%或以上。兼容最多屏幕字体缩放124%或不缩放。
 * 不兼容WinXP和32位系统。本工具目前仅对64位Win7、Win8、Win10兼容。
+* 支持最低分辨率1366x768。
+* 自定义截图功能要求运行内存不少于8G。
 
 ![image](https://github.com/No5972/CEFHuaClient/blob/main/screenshots/mainwindow.png)
 ![image](https://github.com/No5972/CEFHuaClient/blob/main/screenshots/customizecapture.png)
