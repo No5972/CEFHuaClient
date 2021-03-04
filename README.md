@@ -9,7 +9,7 @@
 * 当前仅支持淘米账号密码登录，不支持第三方登录。
 
 ![image](https://github.com/No5972/CEFHuaClient/blob/main/screenshots/mainwindow.png)
-![image](https://github.com/No5972/CEFHuaClient/blob/main/screenshots/customizecapture.png)
+![image](https://github.com/No5972/CEFHuaClient/blob/main/screenshots/customizecapture1.png)
 ![image](https://github.com/No5972/CEFHuaClient/blob/main/screenshots/simulatereplace.png)
 ![image](https://github.com/No5972/CEFHuaClient/blob/main/screenshots/monitor.png)
 
