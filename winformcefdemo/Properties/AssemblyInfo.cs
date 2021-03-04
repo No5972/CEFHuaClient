@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("西一爱服小花仙登录器")]
 [assembly: AssemblyDescription("西一爱服小花仙登录器")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("yiming")]
+[assembly: AssemblyCompany("DMB")]
 [assembly: AssemblyProduct("西一爱服小花仙登录器")]
 [assembly: AssemblyCopyright("Copyright ©  2021 No.5972")]
 [assembly: AssemblyTrademark("")]
@@ -33,6 +33,6 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.7.0.28")]
-[assembly: AssemblyFileVersion("0.7.0.28")]
+[assembly: AssemblyVersion("0.8.0.37")]
+[assembly: AssemblyFileVersion("0.8.0.37")]
 [assembly: NeutralResourcesLanguage("zh-CN")]

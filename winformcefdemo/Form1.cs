@@ -34,6 +34,7 @@ namespace CEFHuaClient
         public UISymbolButton simulateReplaceBtn { get; set; }
         public UISymbolButton debugBtn { get; set; }
         public UISymbolButton customeBgBtn { get; set; }
+        public UISymbolButton refreshBtn { get; set; }
         public bool isCaptureError = false;
         public bool isCustomCapture = false;
         public ContextMenuStrip simulateReplaceMenu;
@@ -67,6 +68,9 @@ namespace CEFHuaClient
         [DllImport("user32.dll", EntryPoint = "FindWindow")]
         private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetActiveWindow();//获得当前活动窗体
+
         [DllImport("gdi32.dll")]
         private static extern int BitBlt(
             IntPtr hdcDest,     // handle to destination DC (device context)
@@ -79,6 +83,30 @@ namespace CEFHuaClient
             int nYSrc,          // y-coordinate of source upper-left corner
             System.Int32 dwRop  // raster operation code
         );
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool RegisterHotKey(
+            IntPtr hWnd,                //要定义热键的窗口的句柄
+            int id,                     //定义热键ID（不能与其它ID重复）          
+            KeyModifiers fsModifiers,   //标识热键是否在按Alt、Ctrl、Shift、Windows等键时才会生效
+            Keys vk                     //定义热键的内容
+        );
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool UnregisterHotKey(
+            IntPtr hWnd,                //要取消热键的窗口的句柄
+            int id                      //要取消热键的ID
+        );
+
+        [Flags()]
+        public enum KeyModifiers
+        {
+            None = 0,
+            Alt = 1,
+            Ctrl = 2,
+            Shift = 4,
+            WindowsKey = 8
+        }
 
 
         public CEFHuaClientFrame()
@@ -247,6 +275,19 @@ namespace CEFHuaClient
             this.Controls.Add(customeBgBtn);
             this.Controls.SetChildIndex(customeBgBtn, 0);
 
+            refreshBtn = new UISymbolButton();
+            refreshBtn.Text = "刷新 (Alt+F5)";
+            refreshBtn.Font = new Font("Microsoft Yahei", 11);
+            refreshBtn.Left = 1050;
+            refreshBtn.Top = 0;
+            refreshBtn.Width = 150;
+            refreshBtn.Height = 25;
+            refreshBtn.Symbol = 61473;
+            refreshBtn.RectColor = refreshBtn.RectHoverColor = refreshBtn.RectPressColor = UIColor.White;
+            refreshBtn.Click += RefreshBtn_Click; ;
+            this.Controls.Add(refreshBtn);
+            this.Controls.SetChildIndex(refreshBtn, 0);
+
             simulateReplaceMenu = new ContextMenuStrip();
             simulateReplaceMenu.Items.Add("模拟衣服替换(&R)...");
             simulateReplaceMenu.Items.Add("查找部件ID(&M)...");
@@ -269,6 +310,11 @@ namespace CEFHuaClient
             // browser.DownloadHandler = new IEDownloadHandler();
             
             browser.LoadingStateChanged += Browser_LoadingStateChanged;
+        }
+
+        private void RefreshBtn_Click(object sender, EventArgs e)
+        {
+            browser.ExecuteScriptAsync("document.write(\"<html><head></head><body><embed style='position: absolute; left: 0; top: 0; height: 100%; width: 100%;' src='http://hua.61.com/Client.swf?timestamp=\"+ new Date().getTime() +\"'></embed></body></html>\")");
         }
 
         private void CustomeBgMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -471,13 +517,33 @@ namespace CEFHuaClient
         protected override void WndProc(ref Message m)
         {
             const int WM_GETMINMAXINFO = 0x24;
-            if (m.Msg == WM_GETMINMAXINFO)
+            const int WM_HOTKEY = 0x0312;
+            switch (m.Msg)
             {
-                MINMAXINFO mmi = (MINMAXINFO)m.GetLParam(typeof(MINMAXINFO));
-                mmi.ptMinTrackSize.x = this.Size.Width;
-                mmi.ptMinTrackSize.y = this.Size.Height;
-                Marshal.StructureToPtr(mmi, m.LParam, true);
+                case WM_GETMINMAXINFO:
+                    MINMAXINFO mmi = (MINMAXINFO)m.GetLParam(typeof(MINMAXINFO));
+                    mmi.ptMinTrackSize.x = this.Size.Width;
+                    mmi.ptMinTrackSize.y = this.Size.Height;
+                    Marshal.StructureToPtr(mmi, m.LParam, true);
+                    break;
+                case WM_HOTKEY:
+                    switch (m.WParam.ToInt32())
+                    {
+                        case 100:    //按下的是Shift+S
+                            IntPtr activeWindow = GetActiveWindow();
+                            if (activeWindow != IntPtr.Zero)
+                            {
+                                RefreshBtn_Click(null, null);         //此处填写快捷键响应代码        
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
             }
+            
             base.WndProc(ref m);
         }
 
@@ -561,6 +627,16 @@ namespace CEFHuaClient
             this.timer3.Enabled = false;
             invokeCapture();
             
+        }
+
+        private void CEFHuaClientFrame_Activated(object sender, EventArgs e)
+        {
+            RegisterHotKey(Handle, 100, KeyModifiers.Alt, Keys.F5);
+        }
+
+        private void CEFHuaClientFrame_Leave(object sender, EventArgs e)
+        {
+            UnregisterHotKey(Handle, 100);
         }
 
         private void CaptureBtn_Click(object sender, EventArgs e)
