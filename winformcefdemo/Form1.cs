@@ -314,7 +314,7 @@ namespace CEFHuaClient
 
         private void RefreshBtn_Click(object sender, EventArgs e)
         {
-            browser.ExecuteScriptAsync("document.write(\"<html><head></head><body><embed style='position: absolute; left: 0; top: 0; height: 100%; width: 100%;' src='http://hua.61.com/Client.swf?timestamp=\"+ new Date().getTime() +\"'></embed></body></html>\")");
+            browser.ExecuteScriptAsync("document.body.innerHTML = \"<embed style='position: absolute; left: 0; top: 0; height: 100%; width: 100%;' src='http://hua.61.com/Client.swf?timestamp=\"+ new Date().getTime() +\"'></embed>\"; ");
         }
 
         private void CustomeBgMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -415,7 +415,7 @@ namespace CEFHuaClient
             {
                 if (browser.Address != "http://hua.61.com/play.shtml?forceLoadSwf")
                 {
-                    browser.LoadHtml("<html><head></head><body><embed style='position: absolute; left: 0; top: 0; height: 100%; width: 100%;' src='http://hua.61.com/Client.swf?timestamp=" + DateTime.Now.ToString() + "'></embed></body></html>", "http://hua.61.com/play.shtml?forceLoadSwf");
+                    browser.LoadHtml("<html><head></head><body><embed style='position: absolute; left: 0; top: 0; height: 100%; width: 100%;' src='http://hua.61.com/Client.swf?timestamp=" + DateTime.Now.Ticks.ToString() + "'></embed></body></html>", "http://hua.61.com/play.shtml?forceLoadSwf");
                     this.Text = this.Text.Replace("若长时间未加载出游戏，请确认是否正确选择了Flash组件位置", "");
                 }
                 else
