@@ -148,11 +148,11 @@ namespace CEFHuaClient
 
             // 必须设置缓存和Cookie否则点击快速进入或者选择服务器时会卡背景logo
             settings.PersistSessionCookies = true;
-            settings.CachePath = System.IO.Path.GetFullPath(@"Temp\Cache\");
-            settings.UserDataPath = System.IO.Path.GetFullPath(@"Temp\User Data\");
-            settings.UserDataPath = System.IO.Path.GetFullPath(@"Temp\LogData\");
+            settings.CachePath = System.Environment.GetEnvironmentVariable("TEMP") + @"\CEFHuaClient\Temp\Cache\";
+            settings.UserDataPath = System.Environment.GetEnvironmentVariable("TEMP") + @"\CEFHuaClient\Temp\User Data\";
+            // settings.LogFile = System.IO.Path.GetFullPath(@"Temp\LogData\");
 
-            string strFlashSettingPath = string.Format(@"{0}Temp\Cache\Pepper Data\Shockwave Flash\WritableRoot\#Security\FlashPlayerTrust", AppDomain.CurrentDomain.BaseDirectory);
+            string strFlashSettingPath = System.Environment.GetEnvironmentVariable("TEMP") + @"\CEFHuaClient\Temp\Cache\Pepper Data\Shockwave Flash\WritableRoot\#Security\FlashPlayerTrust";
             if (!Directory.Exists(strFlashSettingPath))
             {
                 Directory.CreateDirectory(strFlashSettingPath);
@@ -314,7 +314,8 @@ namespace CEFHuaClient
 
         private void RefreshBtn_Click(object sender, EventArgs e)
         {
-            browser.ExecuteScriptAsync("document.body.innerHTML = \"<embed style='position: absolute; left: 0; top: 0; height: 100%; width: 100%;' src='http://hua.61.com/Client.swf?timestamp=\"+ new Date().getTime() +\"'></embed>\"; ");
+            // browser.LoadHtml("<html><head></head><body><embed style='position: absolute; left: 0; top: 0; height: 100%; width: 100%;' src='http://hua.61.com/Client.swf?timestamp=" + DateTime.Now.Ticks.ToString() + "'></embed></body></html>", "http://hua.61.com/play.shtml?forceLoadSwf");
+            browser.ExecuteScriptAsync("document.getElementById(\"flashContent\").innerHTML = '<embed type=\"application/x-shockwave-flash\" src=\"Client.swf?' + autoTimes.getTime() + '\" width=\"100%\" height=\"100%\" style=\"undefined\" id=\"Client\" name=\"Client\" bgcolor=\"#330033\" quality=\"high\" menu=\"false\" wmode=\"opaque\" allowfullscreen=\"true\" allowscriptaccess=\"always\" allowfullscreeninteractive=\"true\">';");
         }
 
         private void CustomeBgMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -415,8 +416,11 @@ namespace CEFHuaClient
             {
                 if (browser.Address != "http://hua.61.com/play.shtml?forceLoadSwf")
                 {
-                    browser.LoadHtml("<html><head></head><body><embed style='position: absolute; left: 0; top: 0; height: 100%; width: 100%;' src='http://hua.61.com/Client.swf?timestamp=" + DateTime.Now.Ticks.ToString() + "'></embed></body></html>", "http://hua.61.com/play.shtml?forceLoadSwf");
+                    // browser.LoadHtml("<html><head></head><body><embed style='position: absolute; left: 0; top: 0; height: 100%; width: 100%;' src='http://hua.61.com/Client.swf?timestamp=" + DateTime.Now.Ticks.ToString() + "'></embed></body></html>", "http://hua.61.com/play.shtml?forceLoadSwf");
+                    browser.ExecuteScriptAsync("document.getElementById(\"flashContent\").innerHTML = '<embed type=\"application/x-shockwave-flash\" src=\"Client.swf?' + autoTimes.getTime() + '\" width=\"100%\" height=\"100%\" style=\"undefined\" id=\"Client\" name=\"Client\" bgcolor=\"#330033\" quality=\"high\" menu=\"false\" wmode=\"opaque\" allowfullscreen=\"true\" allowscriptaccess=\"always\" allowfullscreeninteractive=\"true\">';");
                     this.Text = this.Text.Replace("若长时间未加载出游戏，请确认是否正确选择了Flash组件位置", "");
+                    requestHandler.interceptedAnIcon = new MyRequestHandler.InterceptedAnIcon(InterceptedAnIcon);
+                    browser.RequestHandler = requestHandler;
                 }
                 else
                 {
