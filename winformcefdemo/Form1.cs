@@ -35,6 +35,7 @@ namespace CEFHuaClient
         public UISymbolButton debugBtn { get; set; }
         public UISymbolButton customeBgBtn { get; set; }
         public UISymbolButton refreshBtn { get; set; }
+        public UISymbolButton autoMouseBtn { get; set; }
         public bool isCaptureError = false;
         public bool isCustomCapture = false;
         public ContextMenuStrip simulateReplaceMenu;
@@ -46,6 +47,7 @@ namespace CEFHuaClient
         public ToolStripMenuItem greenBg = new ToolStripMenuItem("绿色");
         public ToolStripMenuItem blueBg = new ToolStripMenuItem("蓝色");
         public MonitorIcons monitorIcons;
+        public int mouseInterval = 50;
 
         public MyRequestHandler requestHandler = new MyRequestHandler();
 
@@ -71,6 +73,7 @@ namespace CEFHuaClient
         [DllImport("user32.dll")]
         public static extern IntPtr GetActiveWindow();//获得当前活动窗体
 
+
         [DllImport("gdi32.dll")]
         private static extern int BitBlt(
             IntPtr hdcDest,     // handle to destination DC (device context)
@@ -83,6 +86,28 @@ namespace CEFHuaClient
             int nYSrc,          // y-coordinate of source upper-left corner
             System.Int32 dwRop  // raster operation code
         );
+
+        [System.Runtime.InteropServices.DllImport("user32")]
+        private static extern int mouse_event(int dwFlags, int dx, int dy, int dwData, int dwExtraInfo);
+
+        //移动鼠标 
+        const int MOUSEEVENTF_MOVE = 0x0001;
+        //模拟鼠标左键按下 
+        const int MOUSEEVENTF_LEFTDOWN = 0x0002;
+        //模拟鼠标左键抬起 
+        const int MOUSEEVENTF_LEFTUP = 0x0004;
+        //模拟鼠标右键按下 
+        const int MOUSEEVENTF_RIGHTDOWN = 0x0008;
+        //模拟鼠标右键抬起 
+        const int MOUSEEVENTF_RIGHTUP = 0x0010;
+        //模拟鼠标中键按下 
+        const int MOUSEEVENTF_MIDDLEDOWN = 0x0020;
+        //模拟鼠标中键抬起 
+        const int MOUSEEVENTF_MIDDLEUP = 0x0040;
+        //标示是否采用绝对坐标 
+        const int MOUSEEVENTF_ABSOLUTE = 0x8000;
+        //模拟鼠标滚轮滚动操作，必须配合dwData参数
+        const int MOUSEEVENTF_WHEEL = 0x0800;
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern bool RegisterHotKey(
@@ -288,6 +313,19 @@ namespace CEFHuaClient
             this.Controls.Add(refreshBtn);
             this.Controls.SetChildIndex(refreshBtn, 0);
 
+            autoMouseBtn = new UISymbolButton();
+            autoMouseBtn.Text = "配置鼠标连点...";
+            autoMouseBtn.Font = new Font("Microsoft Yahei", 11);
+            autoMouseBtn.Left = 1200;
+            autoMouseBtn.Top = 0;
+            autoMouseBtn.Width = 150;
+            autoMouseBtn.Height = 25;
+            autoMouseBtn.Symbol = 62021;
+            autoMouseBtn.RectColor = autoMouseBtn.RectHoverColor = autoMouseBtn.RectPressColor = UIColor.White;
+            autoMouseBtn.Click += AutoMouseBtn_Click; 
+            this.Controls.Add(autoMouseBtn);
+            this.Controls.SetChildIndex(autoMouseBtn, 0);
+
             simulateReplaceMenu = new ContextMenuStrip();
             simulateReplaceMenu.Items.Add("模拟衣服替换(&R)...");
             simulateReplaceMenu.Items.Add("查找部件ID(&M)...");
@@ -310,6 +348,21 @@ namespace CEFHuaClient
             // browser.DownloadHandler = new IEDownloadHandler();
             
             browser.LoadingStateChanged += Browser_LoadingStateChanged;
+        }
+
+        private void AutoMouseBtn_Click(object sender, EventArgs e)
+        {
+            ConfigureMouse configureMouse = new ConfigureMouse(this.mouseInterval);
+            if (configureMouse.ShowDialog() == DialogResult.OK)
+            {
+                this.mouseInterval = configureMouse.thisInterval;
+                this.timerMouseClick.Interval = this.mouseInterval;
+                if (this.timerMouseClick.Enabled)
+                {
+                    this.Text = this.Text.Substring(0, this.Text.LastIndexOf(" - 已开启鼠标连点，间隔：")) + " - 已开启鼠标连点，间隔：" + this.timerMouseClick.Interval;
+                }
+                configureMouse.Dispose();
+            }
         }
 
         private void RefreshBtn_Click(object sender, EventArgs e)
@@ -533,11 +586,29 @@ namespace CEFHuaClient
                 case WM_HOTKEY:
                     switch (m.WParam.ToInt32())
                     {
-                        case 100:    //按下的是Shift+S
+                        case 100:    //按下的是 Alt+F5
                             IntPtr activeWindow = GetActiveWindow();
-                            if (activeWindow != IntPtr.Zero)
+                            IntPtr foregroundWindow = GetForegroundWindow();
+                            if (activeWindow !=IntPtr.Zero && activeWindow == foregroundWindow)
                             {
                                 RefreshBtn_Click(null, null);         //此处填写快捷键响应代码        
+                            }
+                            break;
+                        case 101:    //按下的是 Alt+F5
+                            IntPtr activeWindow2 = GetActiveWindow();
+                            IntPtr foregroundWindow2 = GetForegroundWindow();
+                            if (activeWindow2 != IntPtr.Zero && activeWindow2 == foregroundWindow2)
+                            {
+                                if (timerMouseClick.Enabled)
+                                {
+                                    this.Text = this.Text.Substring(0, this.Text.LastIndexOf(" - 已开启鼠标连点，间隔："));
+                                    timerMouseClick.Enabled = false;         //此处填写快捷键响应代码        
+                                }
+                                else
+                                {
+                                    this.Text = this.Text + " - 已开启鼠标连点，间隔：" + this.mouseInterval;
+                                    timerMouseClick.Enabled = true;
+                                }
                             }
                             break;
                         default:
@@ -636,11 +707,26 @@ namespace CEFHuaClient
         private void CEFHuaClientFrame_Activated(object sender, EventArgs e)
         {
             RegisterHotKey(Handle, 100, KeyModifiers.Alt, Keys.F5);
+            RegisterHotKey(Handle, 101, KeyModifiers.Alt, Keys.F6);
         }
 
         private void CEFHuaClientFrame_Leave(object sender, EventArgs e)
         {
             UnregisterHotKey(Handle, 100);
+            UnregisterHotKey(Handle, 101);
+        }
+
+        private void timerMouseClick_Tick(object sender, EventArgs e)
+        {
+            Point p = this.PointToClient(Control.MousePosition);
+
+            IntPtr activeWindow = GetActiveWindow();
+            IntPtr foregroundWindow = GetForegroundWindow();
+            if (activeWindow != IntPtr.Zero && activeWindow == foregroundWindow &&
+                p.X > 0 && p.X < this.ClientSize.Width && p.Y > 0 && p.Y < this.ClientSize.Height)
+            {
+                mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+            }
         }
 
         private void CaptureBtn_Click(object sender, EventArgs e)

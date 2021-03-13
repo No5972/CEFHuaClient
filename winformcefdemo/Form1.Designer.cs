@@ -33,6 +33,7 @@
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.timer3 = new System.Windows.Forms.Timer(this.components);
+            this.timerMouseClick = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // timer1
@@ -50,6 +51,11 @@
             this.timer3.Interval = 5000;
             this.timer3.Tick += new System.EventHandler(this.timer3_Tick);
             // 
+            // timerMouseClick
+            // 
+            this.timerMouseClick.Interval = 50;
+            this.timerMouseClick.Tick += new System.EventHandler(this.timerMouseClick_Tick);
+            // 
             // CEFHuaClientFrame
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -58,7 +64,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "CEFHuaClientFrame";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "西一爱服 小花仙登录器 V0.9 BY 鄙人 贴吧/B站：wujiuqier Github：No5972 若长时间未加载出游戏，请确认是否正确选择了Flash组件" +
+            this.Text = "西一爱服 小花仙登录器 V1.0 BY 鄙人 贴吧/B站：wujiuqier Github：No5972 若长时间未加载出游戏，请确认是否正确选择了Flash组件" +
     "位置";
             this.Activated += new System.EventHandler(this.CEFHuaClientFrame_Activated);
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -74,6 +80,7 @@
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Timer timer2;
         private System.Windows.Forms.Timer timer3;
+        private System.Windows.Forms.Timer timerMouseClick;
     }
 }
 
