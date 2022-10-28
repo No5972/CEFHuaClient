@@ -55,7 +55,7 @@ namespace winformcefdemo
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            browser.LoadHtml("<html><head></head><body><embed style='position: absolute; left: 0; top: 0; height: 100%; width: 100%;' src='http://hua.61.com/resource/cloth/icon/" + listBox1.SelectedItem + ".swf'></embed></body></html>", "http://hua.61.com/play.shtml?forceLoadSwf");
+            browser.LoadHtml("<html><head></head><body><embed style='position: absolute; left: 0; top: 0; height: 100%; width: 100%;' src='http://hua.61.com/resource/cloth/icon/" + listBox1.SelectedItem.ToString().Substring(0, 3) + "/" + listBox1.SelectedItem + ".swf'></embed></body></html>", "http://hua.61.com/play.shtml?forceLoadSwf");
         }
 
         private void button1_Click(object sender, EventArgs e)

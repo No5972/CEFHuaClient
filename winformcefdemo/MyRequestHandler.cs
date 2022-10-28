@@ -34,6 +34,8 @@ namespace CEFHuaClient
         /// 眉毛 brow <br/>
         /// 嘴巴 mouth <br/>
         /// <br/>
+        /// 皮肤 bone
+        /// <br/>
         /// 
         /// <code>[
         ///     { 'part': 'coat', 'original': '1400152', 'replace': '1400473' },
@@ -131,6 +133,8 @@ namespace CEFHuaClient
                     case "brow":
                     case "mouth":
 
+                    case "bone":
+
                         if (request.Url.Contains(original) &&
                            (request.Url.Contains("cloth/swf/left/") ||
                             request.Url.Contains("cloth/swf/right/") ||
@@ -140,20 +144,24 @@ namespace CEFHuaClient
                             request.Url.Contains("cloth/swf/leftSteeve/") ||
                             request.Url.Contains("cloth/swf/rightSteeve/") ||
                             request.Url.Contains("cloth/swf/leftTrouser/") ||
-                            request.Url.Contains("cloth/swf/rightTrouser/")))
+                            request.Url.Contains("cloth/swf/rightTrouser/") ||
+                            request.Url.Contains("bone/swf/")))
                         {
                             // MessageBox.Show($@"资源拦截：{request.Url}");
 
+                            // bone无前缀，其他部位都有前缀
+
                             string type = request.Url.EndsWith(".js") ? "js" : "css"; // 这里简单判断js还是css，不过多编写
                             string fileName = request.Url.Replace(original + ".swf", replace + ".swf");
+                            string fileNameEx = fileName.Replace(original.Substring(0, 3) + "/", replace.Substring(0, 3) + "/"); // 解决221028更新后衣服URL路径多了一层ID3位前缀的问题，bone无前缀不替换
 
-                            if (string.IsNullOrWhiteSpace(fileName))
+                            if (string.IsNullOrWhiteSpace(fileNameEx))
                             {
                                 // 没有选择文件，还是走默认的Handler
                                 return base.GetResourceHandler(chromiumWebBrowser, browser, frame, request);
                             }
                             // 否则使用选择的资源返回
-                            return new MyResourceHandler(fileName);
+                            return new MyResourceHandler(fileNameEx);
                         }
                         break;
 

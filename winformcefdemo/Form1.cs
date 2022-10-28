@@ -485,7 +485,7 @@ namespace CEFHuaClient
 
         private void InterceptedAnIcon(string iconId)
         {
-            Regex r = new Regex(@"(\/([1-9]\d*))");
+            Regex r = new Regex(@"(\/([0-9]{6,10}))"); // TODO 这里的正则要判断不是3位数的
             Match m = r.Match(iconId);
             if (m.Success)
             {
