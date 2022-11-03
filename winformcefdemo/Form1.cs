@@ -211,6 +211,9 @@ namespace CEFHuaClient
             captureBtn.Width = 150;
             captureBtn.Height = 25;
             captureBtn.RectColor = captureBtn.RectHoverColor = captureBtn.RectPressColor = captureBtn.RectDisableColor = UIColor.White;
+            captureBtn.FillColor = Color.DeepPink;
+            captureBtn.FillHoverColor = Color.HotPink;
+            captureBtn.FillPressColor = captureBtn.FillSelectedColor = Color.MediumVioletRed;
             captureBtn.Click += CaptureBtn_Click;
             captureBtn.MouseUp += CaptureBtn_MouseUp;
             this.Controls.Add(captureBtn);
@@ -229,6 +232,7 @@ namespace CEFHuaClient
             resolution.Width = 150;
             resolution.Height = 25;
             resolution.DropDownStyle = UIDropDownStyle.DropDownList;
+            resolution.RectColor = Color.DeepPink;
             resolution.SelectedIndex = 0;
             resolution.SelectedIndexChanged += Resolution_SelectedIndexChanged;
             this.currentComboBoxResolution = resolution.SelectedItem.ToString();
@@ -244,6 +248,9 @@ namespace CEFHuaClient
             resetFlashPathBtn.Width = 150;
             resetFlashPathBtn.Height = 25;
             resetFlashPathBtn.RectColor = resetFlashPathBtn.RectHoverColor = resetFlashPathBtn.RectPressColor = UIColor.White;
+            resetFlashPathBtn.FillColor = Color.DeepPink;
+            resetFlashPathBtn.FillHoverColor = Color.HotPink;
+            resetFlashPathBtn.FillPressColor = resetFlashPathBtn.FillSelectedColor = Color.MediumVioletRed;
             resetFlashPathBtn.Click += ResetFlashPathBtn_Click;
             this.Controls.Add(resetFlashPathBtn);
             this.Controls.SetChildIndex(resetFlashPathBtn, 0);
@@ -257,6 +264,9 @@ namespace CEFHuaClient
             customeCaptureBtn.Height = 25;
             customeCaptureBtn.Symbol = 61918;
             customeCaptureBtn.RectColor = customeCaptureBtn.RectDisableColor = customeCaptureBtn.RectHoverColor = customeCaptureBtn.RectPressColor = UIColor.White;
+            customeCaptureBtn.FillColor = Color.DeepPink;
+            customeCaptureBtn.FillHoverColor = Color.HotPink;
+            customeCaptureBtn.FillPressColor = customeCaptureBtn.FillSelectedColor = Color.MediumVioletRed;
             customeCaptureBtn.Click += CustomCaptureBtn_Click;
             this.Controls.Add(customeCaptureBtn);
             this.Controls.SetChildIndex(customeCaptureBtn, 0);
@@ -270,6 +280,9 @@ namespace CEFHuaClient
             simulateReplaceBtn.Height = 25;
             simulateReplaceBtn.Symbol = 57378;
             simulateReplaceBtn.RectColor = simulateReplaceBtn.RectHoverColor = simulateReplaceBtn.RectPressColor = UIColor.White;
+            simulateReplaceBtn.FillColor = Color.DeepPink;
+            simulateReplaceBtn.FillHoverColor = Color.HotPink;
+            simulateReplaceBtn.FillPressColor = simulateReplaceBtn.FillSelectedColor = Color.MediumVioletRed;
             simulateReplaceBtn.Click += SimulateReplaceBtn_Click; ;
             this.Controls.Add(simulateReplaceBtn);
             this.Controls.SetChildIndex(simulateReplaceBtn, 0);
@@ -283,6 +296,9 @@ namespace CEFHuaClient
             debugBtn.Height = 25;
             debugBtn.Symbol = 61729;
             debugBtn.RectColor = debugBtn.RectHoverColor = debugBtn.RectPressColor = UIColor.White;
+            debugBtn.FillColor = Color.DeepPink;
+            debugBtn.FillHoverColor = Color.HotPink;
+            debugBtn.FillPressColor = debugBtn.FillSelectedColor = Color.MediumVioletRed;
             debugBtn.Click += DebugBtn_Click;
             this.Controls.Add(debugBtn);
             this.Controls.SetChildIndex(debugBtn, 0);
@@ -296,6 +312,9 @@ namespace CEFHuaClient
             customeBgBtn.Height = 25;
             customeBgBtn.Symbol = 61502;
             customeBgBtn.RectColor = customeBgBtn.RectHoverColor = customeBgBtn.RectPressColor = UIColor.White;
+            customeBgBtn.FillColor = Color.DeepPink;
+            customeBgBtn.FillHoverColor = Color.HotPink;
+            customeBgBtn.FillPressColor = customeBgBtn.FillSelectedColor = Color.MediumVioletRed;
             customeBgBtn.Click += CustomeBgBtn_Click;
             this.Controls.Add(customeBgBtn);
             this.Controls.SetChildIndex(customeBgBtn, 0);
@@ -309,6 +328,9 @@ namespace CEFHuaClient
             refreshBtn.Height = 25;
             refreshBtn.Symbol = 61473;
             refreshBtn.RectColor = refreshBtn.RectHoverColor = refreshBtn.RectPressColor = UIColor.White;
+            refreshBtn.FillColor = Color.DeepPink;
+            refreshBtn.FillHoverColor = Color.HotPink;
+            refreshBtn.FillPressColor = refreshBtn.FillSelectedColor = Color.MediumVioletRed;
             refreshBtn.Click += RefreshBtn_Click; ;
             this.Controls.Add(refreshBtn);
             this.Controls.SetChildIndex(refreshBtn, 0);
@@ -322,6 +344,9 @@ namespace CEFHuaClient
             autoMouseBtn.Height = 25;
             autoMouseBtn.Symbol = 62021;
             autoMouseBtn.RectColor = autoMouseBtn.RectHoverColor = autoMouseBtn.RectPressColor = UIColor.White;
+            autoMouseBtn.FillColor = Color.DeepPink;
+            autoMouseBtn.FillHoverColor = Color.HotPink;
+            autoMouseBtn.FillPressColor = autoMouseBtn.FillSelectedColor = Color.MediumVioletRed;
             autoMouseBtn.Click += AutoMouseBtn_Click; 
             this.Controls.Add(autoMouseBtn);
             this.Controls.SetChildIndex(autoMouseBtn, 0);
@@ -787,7 +812,7 @@ namespace CEFHuaClient
                 }
 
                 var result = await pageClien.CaptureScreenshotAsync();
-                captureBtn.Cursor = Cursors.Arrow;
+                captureBtn.Cursor = Cursors.Hand;
                 captureBtn.Enabled = true;
                 captureBtn.Text = "截图";
 

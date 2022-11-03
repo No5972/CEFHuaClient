@@ -38,7 +38,7 @@
             // 
             // label1
             // 
-            this.label1.Font = new System.Drawing.Font("Microsoft YaHei", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label1.Font = new System.Drawing.Font("微软雅黑", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label1.Location = new System.Drawing.Point(13, 401);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(613, 202);
@@ -47,13 +47,16 @@
             // 
             // listBox1
             // 
-            this.listBox1.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
+            this.listBox1.Font = new System.Drawing.Font("微软雅黑", 12F);
+            this.listBox1.HoverColor = System.Drawing.Color.LightPink;
+            this.listBox1.ItemSelectBackColor = System.Drawing.Color.DeepPink;
             this.listBox1.ItemSelectForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(243)))), ((int)(((byte)(255)))));
             this.listBox1.Location = new System.Drawing.Point(12, 66);
             this.listBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.listBox1.MinimumSize = new System.Drawing.Size(1, 1);
             this.listBox1.Name = "listBox1";
             this.listBox1.Padding = new System.Windows.Forms.Padding(2);
+            this.listBox1.RectColor = System.Drawing.Color.DeepPink;
             this.listBox1.Size = new System.Drawing.Size(220, 330);
             this.listBox1.Style = Sunny.UI.UIStyle.Custom;
             this.listBox1.TabIndex = 6;
@@ -63,7 +66,7 @@
             // button2
             // 
             this.button2.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.button2.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
+            this.button2.Font = new System.Drawing.Font("微软雅黑", 12F);
             this.button2.Location = new System.Drawing.Point(127, 38);
             this.button2.MinimumSize = new System.Drawing.Size(1, 1);
             this.button2.Name = "button2";
@@ -79,7 +82,7 @@
             this.button1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button1.FillColor = System.Drawing.Color.Red;
             this.button1.FillHoverColor = System.Drawing.Color.Coral;
-            this.button1.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
+            this.button1.Font = new System.Drawing.Font("微软雅黑", 12F);
             this.button1.Location = new System.Drawing.Point(12, 38);
             this.button1.MinimumSize = new System.Drawing.Size(1, 1);
             this.button1.Name = "button1";
@@ -93,7 +96,7 @@
             // panel
             // 
             this.panel.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(244)))));
-            this.panel.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
+            this.panel.Font = new System.Drawing.Font("微软雅黑", 12F);
             this.panel.Location = new System.Drawing.Point(239, 38);
             this.panel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.panel.MinimumSize = new System.Drawing.Size(1, 1);
@@ -107,7 +110,7 @@
             // 
             // MonitorIcons
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 27F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 21F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(638, 619);
@@ -119,8 +122,10 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "MonitorIcons";
+            this.RectColor = System.Drawing.Color.DeepPink;
             this.Style = Sunny.UI.UIStyle.Custom;
             this.Text = "查找部件ID";
+            this.TitleColor = System.Drawing.Color.DeepPink;
             this.Load += new System.EventHandler(this.MonitorIcons_Load);
             this.ResumeLayout(false);
 

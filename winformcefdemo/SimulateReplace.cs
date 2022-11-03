@@ -1,9 +1,12 @@
-﻿using Sunny.UI;
+﻿using Newtonsoft.Json;
+using Sunny.UI;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -145,6 +148,9 @@ namespace winformcefdemo
             }
         }
 
+        /// <summary>
+        /// 从列表控件读取内容存储到本窗口的内存列表
+        /// </summary>
         private void updateDict()
         {
             this.dict.Clear();
@@ -250,6 +256,104 @@ namespace winformcefdemo
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void btnImport_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFile = new OpenFileDialog();
+            openFile.Filter = "衣服替换列表文件 (*.json)|*.json";
+            openFile.Title = "选择要导入的衣服替换列表文件";
+            DialogResult dresult = openFile.ShowDialog();
+            if (dresult == DialogResult.OK)
+            {
+                DialogResult isReplace = MessageBox.Show("是否保留原有列表？\n如果选择“是”则在原列表基础上追加；\n如果选择“否”则将覆盖原列表；\n如果选择“取消”则取消本次导入。", "导入文件", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                if (isReplace == DialogResult.Cancel) return;
+                try
+                {
+                    string json = File.ReadAllText(openFile.FileName);
+                    List<Dictionary<string, string>> dictImported = JsonConvert.DeserializeObject<List<Dictionary<string, string>>>(json);
+                    if (isReplace == DialogResult.No) this.listView1.Items.Clear();
+                    foreach (Dictionary<string, string> ee in dictImported)
+                    {
+                        ee.TryGetValue("part", out string part);
+                        ee.TryGetValue("original", out string original);
+                        ee.TryGetValue("replace", out string replace);
+                        ListViewItem eee = new ListViewItem();
+                        switch (part)
+                        {
+                            case "coat": eee = listView1.Items.Add("上衣"); break;
+                            case "pants": eee = listView1.Items.Add("下装"); break;
+                            case "hair": eee = listView1.Items.Add("头发"); break;
+                            case "belt": eee = listView1.Items.Add("腰带"); break;
+                            case "shoes": eee = listView1.Items.Add("鞋子"); break;
+                            case "wings": eee = listView1.Items.Add("翅膀"); break;
+                            case "cap": eee = listView1.Items.Add("帽子"); break;
+                            case "face": eee = listView1.Items.Add("脸部"); break;
+                            case "hand": eee = listView1.Items.Add("手部"); break;
+                            case "item": eee = listView1.Items.Add("道具"); break;
+                            case "feet": eee = listView1.Items.Add("足部"); break;
+                            case "neck": eee = listView1.Items.Add("项链"); break;
+                            case "earring": eee = listView1.Items.Add("耳环"); break;
+                            case "eyes": eee = listView1.Items.Add("眼睛"); break;
+                            case "brow": eee = listView1.Items.Add("眉毛"); break;
+                            case "mouth": eee = listView1.Items.Add("嘴巴"); break;
+                            default: break;
+                        }
+                        eee.SubItems.Add(original);
+                        eee.SubItems.Add(replace);
+                        eee.EnsureVisible();
+                    }
+                } catch (JsonSerializationException jse)
+                {
+                    MessageBox.Show("导入的文件内容格式错误，必须是可以识别的JSON格式才可以。\n在未了解JSON格式的情况下请不要随意编辑导出的文件。\n\n错误信息：\n" + jse.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+            
+        }
+
+        private void btnExport_Click(object sender, EventArgs e)
+        {
+            List<Dictionary<string, string>> dictToExport = new List<Dictionary<string, string>>();
+            foreach (ListViewItem x in this.listView1.Items)
+            {
+                string part = "";
+                switch (x.SubItems[0].Text)
+                {
+                    case "上衣": part = "coat"; break;
+                    case "下装": part = "pants"; break;
+                    case "头发": part = "hair"; break;
+                    case "腰带": part = "belt"; break;
+                    case "鞋子": part = "shoes"; break;
+                    case "翅膀": part = "wings"; break;
+                    case "帽子": part = "cap"; break;
+
+                    case "脸部": part = "face"; break;
+                    case "手部": part = "hand"; break;
+                    case "道具": part = "item"; break;
+                    case "足部": part = "feet"; break;
+                    case "项链": part = "neck"; break;
+                    case "耳环": part = "earring"; break;
+
+                    case "眼睛": part = "eyes"; break;
+                    case "眉毛": part = "brow"; break;
+                    case "嘴巴": part = "mouth"; break;
+                    default: break;
+                }
+                Dictionary<string, string> ee = new Dictionary<string, string>
+                {
+                    { "part" , part }, { "original" , x.SubItems[1].Text }, { "replace" , x.SubItems[2].Text },
+                };
+                dictToExport.Add(ee);
+            }
+            SaveFileDialog save = new SaveFileDialog();
+            save.Filter = "衣服替换列表文件 (*.json)|*.json";
+            DialogResult dresult = save.ShowDialog();
+            if (dresult == DialogResult.OK)
+            {
+                string json = JsonConvert.SerializeObject(dictToExport);
+                File.WriteAllText(save.FileName, json);
+            }
         }
     }
 }

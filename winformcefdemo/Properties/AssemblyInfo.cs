@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("DMB")]
 [assembly: AssemblyProduct("西一爱服小花仙登录器")]
-[assembly: AssemblyCopyright("Copyright ©  2021 No.5972")]
+[assembly: AssemblyCopyright("Copyright ©  2022 No.5972")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -33,6 +33,6 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.35")]
-[assembly: AssemblyFileVersion("1.0.0.35")]
+[assembly: AssemblyVersion("1.2.0.81")]
+[assembly: AssemblyFileVersion("1.2.0.81")]
 [assembly: NeutralResourcesLanguage("zh-CN")]

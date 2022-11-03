@@ -64,7 +64,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "CEFHuaClientFrame";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "西一爱服 小花仙登录器 V1.1 BY 鄙人 贴吧/B站：wujiuqier Github：No5972 若长时间未加载出游戏，请确认是否正确选择了Flash组件" +
+            this.Text = "西一爱服 小花仙登录器 V1.2 BY 鄙人 贴吧/B站：wujiuqier Github：No5972 若长时间未加载出游戏，请确认是否正确选择了Flash组件" +
     "位置";
             this.Activated += new System.EventHandler(this.CEFHuaClientFrame_Activated);
             this.Load += new System.EventHandler(this.Form1_Load);
