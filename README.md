@@ -8,7 +8,7 @@
 * 不兼容WinXP和其他32位系统。本工具目前仅对64位Win7、Win8、Win10、Win11兼容。
 * 支持最低分辨率1366x768。
 * 自定义截图功能要求运行内存不少于8G。
-* 当前仅支持淘米账号密码登录和微信扫码登录，暂不支持QQ登录。
+* 现已支持微信扫码登录、QQ登录和淘米账号密码登录。**如果条件允许的话，请尽量使用微信或者QQ的扫码登录**而不是输入淘米账号的密码。
 * 必须要C++ 2015运行库才能运行。若打开报错提示“未能加载文件或程序集“CefSharp.Core.dll”或它的某一个依赖项。找不到指定的模块”，请留意系统设置的“应用和功能”是否安装了Microsoft Visual C++ 2015 Redistributable (x64)，如果没有请安装这个C++ 2015运行库，记得装64位的。
 * 如果打开时提示“该版本过旧，不支持运行，请升级后使用”，请将电脑上所有的“Shockwave Flash”目录删除（注意删除前确保各个Shockwave Flash目录下没有重要文件），然后从hosts文件屏蔽这些域名：```geo2.adobe.com, fpdownload2.macromedia.com, fpdownload.macromedia.com, macromedia.com```。（关于hosts文件屏蔽域名具体步骤请自行搜索） 这样可以继续使用该版本的Flash Player。
 
