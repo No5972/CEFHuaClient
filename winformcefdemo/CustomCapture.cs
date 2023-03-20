@@ -13,7 +13,7 @@ namespace winformcefdemo
 {
     public partial class CustomCapture : UIForm
     {
-        public int w = 0, h = 0, x = 0, y = 0;
+        public int w = 0, h = 0, x = 0, y = 0, delayAfterZoom = 0;
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -22,6 +22,7 @@ namespace winformcefdemo
             this.x = (int)this.numericUpDown3.Value;
             this.y = (int)this.numericUpDown4.Value;
             this.scale = (double)this.numericUpDown5.Value;
+            this.delayAfterZoom = (int)this.numericUpDown6.Value;
             this.DialogResult = DialogResult.OK;
         }
 

@@ -40,11 +40,14 @@
             this.label5 = new System.Windows.Forms.Label();
             this.button1 = new Sunny.UI.UIButton();
             this.button2 = new Sunny.UI.UIButton();
+            this.numericUpDown6 = new System.Windows.Forms.NumericUpDown();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown6)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -140,7 +143,7 @@
             this.label3.Font = new System.Drawing.Font("微软雅黑", 11F);
             this.label3.Location = new System.Drawing.Point(3, 111);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(78, 20);
+            this.label3.Size = new System.Drawing.Size(79, 20);
             this.label3.TabIndex = 13;
             this.label3.Text = "视野偏移X";
             // 
@@ -172,7 +175,7 @@
             this.label4.Font = new System.Drawing.Font("微软雅黑", 11F);
             this.label4.Location = new System.Drawing.Point(3, 146);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(77, 20);
+            this.label4.Size = new System.Drawing.Size(78, 20);
             this.label4.TabIndex = 15;
             this.label4.Text = "视野偏移Y";
             // 
@@ -223,7 +226,7 @@
             this.button1.FillPressColor = System.Drawing.Color.MediumVioletRed;
             this.button1.FillSelectedColor = System.Drawing.Color.MediumVioletRed;
             this.button1.Font = new System.Drawing.Font("微软雅黑", 12F);
-            this.button1.Location = new System.Drawing.Point(7, 214);
+            this.button1.Location = new System.Drawing.Point(7, 247);
             this.button1.MinimumSize = new System.Drawing.Size(1, 1);
             this.button1.Name = "button1";
             this.button1.RectColor = System.Drawing.Color.DeepPink;
@@ -245,7 +248,7 @@
             this.button2.FillPressColor = System.Drawing.Color.MediumVioletRed;
             this.button2.FillSelectedColor = System.Drawing.Color.MediumVioletRed;
             this.button2.Font = new System.Drawing.Font("微软雅黑", 12F);
-            this.button2.Location = new System.Drawing.Point(112, 214);
+            this.button2.Location = new System.Drawing.Point(112, 247);
             this.button2.MinimumSize = new System.Drawing.Size(1, 1);
             this.button2.Name = "button2";
             this.button2.RectColor = System.Drawing.Color.DeepPink;
@@ -258,14 +261,48 @@
             this.button2.Text = "取消";
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
+            // numericUpDown6
+            // 
+            this.numericUpDown6.Location = new System.Drawing.Point(106, 212);
+            this.numericUpDown6.Maximum = new decimal(new int[] {
+            20000,
+            0,
+            0,
+            0});
+            this.numericUpDown6.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDown6.Name = "numericUpDown6";
+            this.numericUpDown6.Size = new System.Drawing.Size(101, 29);
+            this.numericUpDown6.TabIndex = 22;
+            this.numericUpDown6.Value = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("微软雅黑", 11F);
+            this.label6.Location = new System.Drawing.Point(3, 216);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(105, 20);
+            this.label6.TabIndex = 21;
+            this.label6.Text = "缩放延时/毫秒";
+            // 
             // CustomCapture
             // 
             this.AcceptButton = this.button1;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 21F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 21F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.button2;
-            this.ClientSize = new System.Drawing.Size(215, 246);
+            this.ClientSize = new System.Drawing.Size(215, 280);
+            this.Controls.Add(this.numericUpDown6);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.numericUpDown5);
@@ -291,6 +328,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown6)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -310,5 +348,7 @@
         private System.Windows.Forms.Label label5;
         private Sunny.UI.UIButton button1;
         private Sunny.UI.UIButton button2;
+        private System.Windows.Forms.NumericUpDown numericUpDown6;
+        private System.Windows.Forms.Label label6;
     }
 }

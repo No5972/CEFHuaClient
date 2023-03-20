@@ -28,7 +28,7 @@ namespace CEFHuaClient
         public ChromiumWebBrowser browser { get; set; }
         public Panel panel { get; set; }
         public UIComboBox resolution { get; set; }
-        public UISymbolButton captureBtn  { get; set; }
+        public UISymbolButton captureBtn { get; set; }
         public UISymbolButton resetFlashPathBtn { get; set; }
         public UISymbolButton customeCaptureBtn { get; set; }
         public UISymbolButton simulateReplaceBtn { get; set; }
@@ -347,7 +347,7 @@ namespace CEFHuaClient
             autoMouseBtn.FillColor = Color.DeepPink;
             autoMouseBtn.FillHoverColor = Color.HotPink;
             autoMouseBtn.FillPressColor = autoMouseBtn.FillSelectedColor = Color.MediumVioletRed;
-            autoMouseBtn.Click += AutoMouseBtn_Click; 
+            autoMouseBtn.Click += AutoMouseBtn_Click;
             this.Controls.Add(autoMouseBtn);
             this.Controls.SetChildIndex(autoMouseBtn, 0);
 
@@ -371,7 +371,7 @@ namespace CEFHuaClient
 
 
             // browser.DownloadHandler = new IEDownloadHandler();
-            
+
             browser.LoadingStateChanged += Browser_LoadingStateChanged;
         }
 
@@ -406,7 +406,8 @@ namespace CEFHuaClient
             this.redBg.Checked = false;
             this.greenBg.Checked = false;
             this.blueBg.Checked = false;
-            switch (e.ClickedItem.Text) {
+            switch (e.ClickedItem.Text)
+            {
                 case "不替换":
                     this.requestHandler.bgResourceName = "";
                     this.noReplaceBg.Checked = true;
@@ -475,7 +476,7 @@ namespace CEFHuaClient
 
         private void SettingMenu_Click(object sender, EventArgs e)
         {
-            
+
         }
 
         private void DebugBtn_Click(object sender, EventArgs e)
@@ -505,7 +506,7 @@ namespace CEFHuaClient
                     requestHandler.interceptedAnIcon = new MyRequestHandler.InterceptedAnIcon(InterceptedAnIcon);
                     browser.RequestHandler = requestHandler;
                 }
-            } 
+            }
         }
 
         private void InterceptedAnIcon(string iconId)
@@ -527,20 +528,22 @@ namespace CEFHuaClient
             CustomCapture customCapture = new CustomCapture();
             if (customCapture.ShowDialog() == DialogResult.OK)
             {
-                int w = customCapture.w, h = customCapture.h, x = customCapture.x, y = customCapture.y;
+                int w = customCapture.w, h = customCapture.h, x = customCapture.x, y = customCapture.y, delayAfterZoom = customCapture.delayAfterZoom;
                 double scale = customCapture.scale;
 
                 customCapture.Dispose();
-                invokeCustomCapture(w, h, scale, x, y);
+                invokeCustomCapture(w, h, scale, x, y, delayAfterZoom);
             }
-            
+
         }
 
-        private async void invokeCustomCapture(int width, int height, double scale, int offsetX, int offsetY)
+        private async void invokeCustomCapture(int width, int height, double scale, int offsetX, int offsetY, int delayAfterZoom)
         {
             int previousW = this.Width, previousH = this.Height;
             this.customeCaptureBtn.Enabled = false;
             this.captureBtn.Enabled = false;
+
+            this.timer3.Interval = delayAfterZoom;
 
             resizeWindow(width, height);
             // geckoWebBrowser1.Navigate("javascript:void(document.getElementsByTagName('embed')[0].Zoom(" + (100.0 / scale) + "));");
@@ -614,7 +617,7 @@ namespace CEFHuaClient
                         case 100:    //按下的是 Alt+F5
                             IntPtr activeWindow = GetActiveWindow();
                             IntPtr foregroundWindow = GetForegroundWindow();
-                            if (activeWindow !=IntPtr.Zero && activeWindow == foregroundWindow)
+                            if (activeWindow != IntPtr.Zero && activeWindow == foregroundWindow)
                             {
                                 RefreshBtn_Click(null, null);         //此处填写快捷键响应代码        
                             }
@@ -643,7 +646,7 @@ namespace CEFHuaClient
                 default:
                     break;
             }
-            
+
             base.WndProc(ref m);
         }
 
@@ -687,7 +690,8 @@ namespace CEFHuaClient
                     {
                         resizeWindow(resolution.thisWidth, resolution.thisHeight);
                         resolution.Dispose();
-                    } else
+                    }
+                    else
                     {
                         Timer tSwitch = new Timer();
                         tSwitch.Interval = 50;
@@ -726,7 +730,7 @@ namespace CEFHuaClient
         {
             this.timer3.Enabled = false;
             invokeCapture();
-            
+
         }
 
         private void CEFHuaClientFrame_Activated(object sender, EventArgs e)
@@ -784,7 +788,7 @@ namespace CEFHuaClient
                         }
                     })
                 );
-                
+
 
                 // browser.ShowDevTools();
             }
@@ -839,7 +843,7 @@ namespace CEFHuaClient
                         string path = dialog.FileName;
                         try
                         {
-                            
+
                             File.WriteAllBytes(path, result.Data);
                             MessageBox.Show(path + "保存成功。文件大小：" + decimal.Round(
                                 decimal.Divide(decimal.Parse(result.Data.Length.ToString()), decimal.Parse("1048576")), 2) + "MB", "截图结果", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -852,7 +856,8 @@ namespace CEFHuaClient
                     }
 
                 }
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 isCaptureError = true;
                 captureBtn.Cursor = Cursors.Arrow;
@@ -881,6 +886,6 @@ namespace CEFHuaClient
             }
         }
 
-        
+
     }
 }
