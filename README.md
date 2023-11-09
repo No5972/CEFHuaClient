@@ -1,6 +1,13 @@
 # 西一爱服 小花仙登录器 / CEFHuaClient
-## 恢复更新，此版本体积较大，但提供了自定义分辨率的截图功能
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/No5972/CEFHuaClient?label=%E7%82%B9%E6%AD%A4%E4%B8%8B%E8%BD%BD%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC%EF%BC%88%E9%87%8C%E9%9D%A2%E7%9A%84%E8%93%9D%E5%A5%8F%E4%BA%91%E9%93%BE%E6%8E%A5%EF%BC%89)](https://github.com/No5972/CEFHuaClient/releases/latest)
+**由于登录方式再次变更，本项目出现了无法解决的问题，至少近期是无法解决的。本项目即将予以归档，也就是不会再继续更新。**
+
+**新的登录器项目已经开始了，请大家移步新的登录器。受限于ToS，新的登录器不会在GitHub开源，大家直接下载压缩包使用即可。**
+
+**<https://wujiuqier.lanzouy.com/b013rji1a> 提取码：1stt 解压密码：xhxhzlt**
+
+**尽量做到和原有功能一致，并根据大家需要继续开发新的功能。还是那句话，请勿在任何非官方应用程序中输入密码，请尽量使用扫码登录。**
+
+<!-- [![GitHub release (latest by date)](https://img.shields.io/github/v/release/No5972/CEFHuaClient?label=%E7%82%B9%E6%AD%A4%E4%B8%8B%E8%BD%BD%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC%EF%BC%88%E9%87%8C%E9%9D%A2%E7%9A%84%E8%93%9D%E5%A5%8F%E4%BA%91%E9%93%BE%E6%8E%A5%EF%BC%89)](https://github.com/No5972/CEFHuaClient/releases/latest) -->
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FNo5972%2FCEFHuaClient.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FNo5972%2FCEFHuaClient?ref=badge_shield)
 
 ## 注意：
